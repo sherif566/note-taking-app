@@ -1,64 +1,40 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\Category;
-use App\Models\Note;
-use Illuminate\Http\Request;
+use App\Repositories\CategoryRepository;
 
 class CategoryService
 {
-    //Create new category
-    public function create(Request $request)
+    protected $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id'
-        ]);
-        return Category::create([
-            'name' => $request->name,
-            'parent_id' => $request->parent_id
-        ]);
+        $this->categoryRepository = $categoryRepository;
     }
 
-    //Get all Categories
-    public function getAll()
+    public function getAllCategories()
     {
-        return Category::with('parent')->get();
+        return $this->categoryRepository->getAll();
     }
 
-    //Get a specific Category
-    public function get($id)
+    public function findCategoryById($id)
     {
-        return Category::with('parent')->find($id);
+        return $this->categoryRepository->findById($id);
     }
 
-    //Update a Category
-    public function update(Request $request, $id)
+    public function createCategory(array $data)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id'
-        ]);
-        $category = Category::find($id);
-        if (!$category) {
-            return null;
-        }
-        $category->update([
-            'name' => $request->name,
-            'parent_id' => $request->parent_id
-        ]);
-        return $category;
+        return $this->categoryRepository->create($data);
     }
 
-    //Delete a category
-    public function delete($id)
+    public function updateCategory($category, array $data)
     {
-        $category= Category::find($id);
-        if (!$category) {
-            return null;
-        }
-        $category->delete();
-        return true;
+        return $this->categoryRepository->update($category, $data);
+    }
 
+    public function deleteCategory($category)
+    {
+        return $this->categoryRepository->delete($category);
     }
 }

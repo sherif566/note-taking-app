@@ -1,66 +1,40 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\Note;
-use Illuminate\Http\Request;
+use App\Repositories\NoteRepository;
 
 class NoteService
 {
-    public function create(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
-        ]);
+    protected $noteRepository;
 
-        return Note::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'category_id' => $request->category_id
-        ]);
+    public function __construct(NoteRepository $noteRepository)
+    {
+        $this->noteRepository = $noteRepository;
     }
 
-    public function getAll()
+    public function getAllNotes()
     {
-        return Note::with('category')->get();
+        return $this->noteRepository->getAll();
     }
 
-    public function get($id)
+    public function findNoteById($id)
     {
-        return Note::with('category')->find($id);
+        return $this->noteRepository->findById($id);
     }
 
-    public function update(Request $request, $id)
+    public function createNote(array $data)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
-        ]);
-
-        $note = Note::find($id);
-        if (!$note) {
-            return null;
-        }
-
-        $note->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'category_id' => $request->category_id
-        ]);
-
-        return $note;
+        return $this->noteRepository->create($data);
     }
 
-    public function delete($id)
+    public function updateNote($note, array $data)
     {
-        $note = Note::find($id);
-        if (!$note) {
-            return null;
-        }
+        return $this->noteRepository->update($note, $data);
+    }
 
-        $note->delete();
-        return true;
+    public function deleteNote($note)
+    {
+        return $this->noteRepository->delete($note);
     }
 }
