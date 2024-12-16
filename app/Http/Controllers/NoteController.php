@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\StoreNoteRequest;
+use App\Http\Requests\UpdateNoteRequest;
 use App\Services\NoteService;
 use Illuminate\Http\Request;
 
@@ -30,31 +31,15 @@ class NoteController extends Controller
     }
 
     // Create a new note
-    public function store(Request $request)
+    public function store(StoreNoteRequest $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        $note = $this->noteService->createNote($data);
-        return response()->json($note, 201);
+        return $this->noteService->createNote($request->validated());
     }
 
     // Update a note
-    public function update(Request $request, $id)
+    public function update(UpdateNoteRequest $request, $id)
     {
-        $note = $this->noteService->findNoteById($id);
-
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        $updatedNote = $this->noteService->updateNote($note, $data);
-        return response()->json($updatedNote);
+        return $this->noteService->updateNote($id, $request->validated());
     }
 
     // Delete a note

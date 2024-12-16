@@ -28,8 +28,17 @@ class NoteService
         return $this->noteRepository->create($data);
     }
 
-    public function updateNote($note, array $data)
+    public function updateNote($id, array $data)
     {
+        // Find the note by its ID
+        $note = $this->noteRepository->findById($id);
+
+        // Check if the note exists
+        if (!$note) {
+            throw new \Exception('Note not found');
+        }
+
+        // Pass the note model to the repository's update method
         return $this->noteRepository->update($note, $data);
     }
 

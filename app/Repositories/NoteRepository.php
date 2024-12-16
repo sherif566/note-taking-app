@@ -8,7 +8,7 @@ class NoteRepository
 {
     public function getAll()
     {
-        return Note::with('category')->get(); // Eager load the category
+        return Note::with('category')->get();
     }
 
     public function findById($id)
