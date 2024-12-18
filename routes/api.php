@@ -35,3 +35,5 @@ Route::prefix('categories')->group(function () {
     // Delete a note from a specific category
     Route::delete('{category}/notes/{note}', [NoteController::class, 'destroyFromCategory']);
 });
+
+
