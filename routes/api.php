@@ -15,11 +15,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Resource route for categories
-Route::resource('categories', CategoryController::class);
+// API Resource route for categories
+Route::apiResource('categories', CategoryController::class);
 
-// Resource route for notes
-Route::resource('notes', NoteController::class);
+// API Resource route for notes
+Route::apiResource('notes', NoteController::class);
 
 // Nested routes for notes within categories
 Route::prefix('categories')->group(function () {

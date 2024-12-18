@@ -12,8 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notes', function (Blueprint $table) {
-            $table->engine = 'InnoDB'; // Ensure InnoDB engine is used
-
             $table->id();
             $table->string('title');
             $table->text('description');

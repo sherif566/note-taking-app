@@ -16,13 +16,10 @@ class AccessLog
      */
     public function handle($request, Closure $next)
     {
-        // Log incoming request
         $start = microtime(true);
 
-        // Process the request and get the response
         $response = $next($request);
 
-        // Log access details
         $duration = round((microtime(true) - $start) * 1000, 2);
         Log::info('Access Log', [
             'method' => $request->method(),

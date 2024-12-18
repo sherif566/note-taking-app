@@ -15,7 +15,7 @@ class NoteFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            'category_id' => Category::inRandomOrder()->first()->id
+            'category_id' => Category::factory()->create()->id
 
         ];
     }

@@ -19,7 +19,7 @@ class NoteService
 
     public function getAllNotes()
     {
-        return $this->noteRepository->getAll(); // Get all notes
+        return $this->noteRepository->getAll();
     }
 
     public function findNoteById($id)
@@ -29,18 +29,18 @@ class NoteService
 
     public function createNote(array $data)
     {
-        return $this->noteRepository->create($data); // Create a new note
+        return $this->noteRepository->create($data);
     }
 
     public function updateNote($id, array $data)
     {
-        $note = $this->noteRepository->findById($id); // Find the note
-        return $this->noteRepository->update($note, $data); // Update the note
+        $note = $this->noteRepository->findById($id);
+        return $this->noteRepository->update($note, $data);
     }
 
     public function deleteNote(Note $note)
     {
-        return $this->noteRepository->delete($note); // Delete the note
+        return $this->noteRepository->delete($note);
     }
 
 
@@ -50,25 +50,23 @@ class NoteService
 
     public function createNoteInCategory(array $data, Category $category)
     {
-        $data['category_id'] = $category->id; // Ensure category_id is set
+        $data['category_id'] = $category->id;
         return $this->noteRepository->create($data);
     }
 
     public function updateNoteInCategory(array $data, Category $category, Note $note)
     {
-        // Ensure the note belongs to the specified category
         if ($note->category_id !== $category->id) {
             throw new \Exception('Note does not belong to this category');
         }
-        return $this->noteRepository->update($note, $data); // Update the note
+        return $this->noteRepository->update($note, $data);
     }
 
     public function deleteNoteFromCategory(Category $category, Note $note)
     {
-        // Ensure the note belongs to the specified category
         if ($note->category_id !== $category->id) {
             throw new \Exception('Note does not belong to this category');
         }
-        return $this->noteRepository->delete($note); // Delete the note from the category
+        return $this->noteRepository->delete($note);
     }
 }

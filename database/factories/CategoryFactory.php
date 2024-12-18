@@ -13,7 +13,6 @@ class CategoryFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'parent_id' => null
         ];
     }
 }

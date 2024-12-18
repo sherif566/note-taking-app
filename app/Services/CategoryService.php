@@ -18,7 +18,6 @@ class CategoryService
         return $this->categoryRepository->getAll();
     }
 
-     // Method to get notes by category name
      public function getNotesByCategory($categoryName)
      {
          return $this->categoryRepository->getNotesByCategory($categoryName);
@@ -36,15 +35,12 @@ class CategoryService
 
     public function updateCategory($id, array $data)
     {
-        // Find the note by its ID
         $category = $this->categoryRepository->findById($id);
 
-        // Check if the note exists
         if (!$category) {
             throw new \Exception('Category not found');
         }
 
-        // Pass the note model to the repository's update method
         return $this->categoryRepository->update($category, $data);
     }
 
