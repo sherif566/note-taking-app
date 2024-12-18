@@ -44,12 +44,16 @@ class NoteController extends Controller
         return $this->noteService->updateNote($id, $request->validated());
     }
 
-    // Delete a note
     public function destroy($id)
     {
         $note = $this->noteService->findNoteById($id);
 
+        if (!$note) {
+            return response()->json(['error' => 'Note not found'], 404);
+        }
+
         $this->noteService->deleteNote($note);
-        return response()->json(null, 204);
+
+        return response()->json(['message' => 'Note deleted successfully'], 200);
     }
 }

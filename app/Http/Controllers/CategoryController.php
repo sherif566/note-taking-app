@@ -48,7 +48,12 @@ class CategoryController extends Controller
     {
         $category = $this->categoryService->findCategoryById($id);
 
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+
         $this->categoryService->deleteCategory($category);
-        return response()->json(null, 204);
+
+        return response()->json(['message' => 'Category deleted successfully'], 200);
     }
 }
