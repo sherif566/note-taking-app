@@ -5,6 +5,7 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Services\NoteService;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class NoteController extends Controller
 {
@@ -17,10 +18,10 @@ class NoteController extends Controller
     }
 
     // Get all notes with categories
-    public function index()
+
+    public function index(Category $category)
     {
-        $notes = $this->noteService->getAllNotes();
-        return response()->json($notes);
+        return response()->json($category->notes, 200);
     }
 
     // Get a note by ID
@@ -31,9 +32,10 @@ class NoteController extends Controller
     }
 
     // Create a new note
-    public function store(StoreNoteRequest $request)
+    public function store(StoreNoteRequest $request, Category $category)
     {
-        return $this->noteService->createNote($request->validated());
+        $note = $category->notes()->create($request->validated());
+        return response()->json($note, 201);
     }
 
     // Update a note
