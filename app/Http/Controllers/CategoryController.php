@@ -7,11 +7,9 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    protected $categoryService;
 
-    public function __construct(CategoryService $categoryService)
+    public function __construct(private CategoryService $categoryService)
     {
-        $this->categoryService = $categoryService;
     }
 
     public function index()

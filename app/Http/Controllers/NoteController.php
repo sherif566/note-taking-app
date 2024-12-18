@@ -12,13 +12,10 @@ use Illuminate\Http\Response;
 
 class NoteController extends Controller
 {
-    protected $noteService;
 
-    public function __construct(NoteService $noteService)
+    public function __construct(private NoteService $noteService)
     {
-        $this->noteService = $noteService;
     }
-
     // General Notes Management
 
     public function index()

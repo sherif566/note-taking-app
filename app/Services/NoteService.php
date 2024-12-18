@@ -8,11 +8,9 @@ use App\Repositories\NoteRepository;
 
 class NoteService
 {
-    protected $noteRepository;
 
-    public function __construct(NoteRepository $noteRepository)
+    public function __construct(private NoteRepository $noteRepository)
     {
-        $this->noteRepository = $noteRepository;
     }
 
     // General Methods (for all notes)
