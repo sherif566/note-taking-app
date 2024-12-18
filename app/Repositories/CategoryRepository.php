@@ -11,6 +11,15 @@ class CategoryRepository
         return Category::all();
     }
 
+    // Get notes by category name
+    public function getNotesByCategory($categoryName)
+    {
+        $category = Category::where('name', $categoryName)->first();
+
+        // Return the category if found, otherwise return null
+        return $category ? $category->notes : null;
+    }
+
     public function findById($id)
     {
         return Category::findOrFail($id);

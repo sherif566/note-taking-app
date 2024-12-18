@@ -8,7 +8,7 @@ class NoteRepository
 {
     public function getAll()
     {
-        return Note::with('category')->get();
+        return Note::all();
     }
 
     public function findById($id)

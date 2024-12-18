@@ -23,6 +23,20 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
+    // Get notes by category name
+    public function getNotesByCategory($categoryName)
+    {
+        $notes = $this->categoryService->getNotesByCategory($categoryName);
+
+        // If no notes found, return a 404 error
+        if (!$notes) {
+            return response()->json(['error' => 'Category not found or no notes available'], 404);
+        }
+
+        // Return notes associated with the category
+        return response()->json($notes, 200);
+    }
+
     // Get a category by ID
     public function show($id)
     {

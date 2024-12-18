@@ -18,11 +18,12 @@ class NoteController extends Controller
     }
 
     // Get all notes with categories
-
-    public function index(Category $category)
+    public function index()
     {
-        return response()->json($category->notes, 200);
+        $notes = $this->noteService->getAllNotes();
+        return response()->json($notes, 200);
     }
+
 
     // Get a note by ID
     public function show($id)

@@ -25,5 +25,6 @@ Route::resource('categories', CategoryController::class);
 
 Route::resource('notes', NoteController::class);
 
-Route::apiResource('categories.notes', NoteController::class)
-    ->shallow();
+
+// This will route to the getNotesByCategory method to fetch notes for a specific category
+Route::get('/categories/{categoryName}/notes', [CategoryController::class, 'getNotesByCategory']);;

@@ -18,6 +18,12 @@ class CategoryService
         return $this->categoryRepository->getAll();
     }
 
+     // Method to get notes by category name
+     public function getNotesByCategory($categoryName)
+     {
+         return $this->categoryRepository->getNotesByCategory($categoryName);
+     }
+
     public function findCategoryById($id)
     {
         return $this->categoryRepository->findById($id);
