@@ -8,28 +8,32 @@ class NoteRepository
 {
     public function getAll()
     {
-        return Note::all();
+        // Fetch all notes with their related categories
+        return Note::with('category')->get();
     }
 
     public function findById($id)
     {
-        return Note::with('category')->findOrFail($id);
+        // Find a note by its ID
+        return Note::find($id);
     }
 
     public function create(array $data)
     {
+        // Create a new note
         return Note::create($data);
     }
 
     public function update(Note $note, array $data)
     {
+        // Update an existing note
         $note->update($data);
         return $note;
     }
 
     public function delete(Note $note)
     {
-        $note->delete();
-        return true;
+        // Delete the note
+        return $note->delete();
     }
 }

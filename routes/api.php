@@ -6,25 +6,32 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\CategoryController;
 
 /*
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
 | API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
+|---------------------------------------------------------------------------
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+// Resource route for categories
 Route::resource('categories', CategoryController::class);
 
+// Resource route for notes
 Route::resource('notes', NoteController::class);
 
+// Nested routes for notes within categories
+Route::prefix('categories')->group(function () {
+    // Get all notes for a specific category
+    Route::get('{category}/notes', [NoteController::class, 'getCategoryNotes']);
 
-// This will route to the getNotesByCategory method to fetch notes for a specific category
-Route::get('/categories/{categoryName}/notes', [CategoryController::class, 'getNotesByCategory']);;
+    // Create a note under a specific category
+    Route::post('{category}/notes', [NoteController::class, 'storeInCategory']);
+
+    // Update a note in a specific category
+    Route::put('{category}/notes/{note}', [NoteController::class, 'updateInCategory']);
+
+    // Delete a note from a specific category
+    Route::delete('{category}/notes/{note}', [NoteController::class, 'destroyFromCategory']);
+});
