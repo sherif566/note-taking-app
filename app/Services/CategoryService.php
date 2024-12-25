@@ -5,16 +5,19 @@ namespace App\Services;
 use App\Models\Category;
 use App\DTOs\CategoryDTO;
 use App\Repositories\CategoryRepository;
+use App\Interfaces\CategoryRepositoryInterface;
 
 class CategoryService
 {
-    public function __construct(private CategoryRepository $categoryRepository)
-    {
-    }
+    private CategoryRepositoryInterface $categoryRepository;
 
+    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
     public function getAll()
     {
-        return $this->categoryRepository->getAll();
+        return $this->categoryRepository->all();
     }
 
     public function create(CategoryDTO $dto)

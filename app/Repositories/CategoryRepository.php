@@ -2,12 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\CategoryRepositoryInterface;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 
-class CategoryRepository
+class CategoryRepository implements CategoryRepositoryInterface
 {
-    public function getAll($perPage = 10)
+    public function all($perPage = 10)
     {
         return Category::paginate($perPage);
     }
@@ -17,16 +18,15 @@ class CategoryRepository
         return Category::create($data);
     }
 
-    public function update(Category $category, array $data)
+    public function update($category, array $data)
     {
         return tap($category, function ($category) use ($data) {
             $category->update($data);
-
             Log::info('Category updated', ['category_id' => $category->id]);
         });
     }
 
-    public function delete(Category $category)
+    public function delete($category)
     {
         $category->delete();
     }

@@ -6,18 +6,21 @@ use App\Models\Category;
 use App\Models\Note;
 use App\DTOs\NoteDTO;
 use App\Repositories\NoteRepository;
+use App\Interfaces\NoteRepositoryInterface;
 
 class NoteService
 {
-    public function __construct(private NoteRepository $noteRepository)
-    {
-    }
+    private NoteRepositoryInterface $noteRepository;
 
+    public function __construct(NoteRepositoryInterface $noteRepository)
+    {
+        $this->noteRepository = $noteRepository;
+    }
     // General Methods (for all notes)
 
     public function getAll()
     {
-        return $this->noteRepository->getAll();
+        return $this->noteRepository->all();
     }
 
     public function create(NoteDTO $dto)
