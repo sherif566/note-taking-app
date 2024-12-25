@@ -19,7 +19,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = $this->categoryService->getAll();
-        Log::info('Retrieved all categories'); // Basic log for fetching data
+        Log::info('Retrieved all categories');
         return CategoryResource::collection($categories);
     }
 
