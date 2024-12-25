@@ -3,24 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\Log;
 
 class CategoryRepository
 {
-    public function getAll()
+    public function getAll($perPage = 10)
     {
-        return Category::all();
-    }
-
-    public function getNotesByCategory($categoryName)
-    {
-        $category = Category::where('name', $categoryName)->first();
-
-        return $category ? $category->notes : null;
-    }
-
-    public function findById($id)
-    {
-        return Category::findOrFail($id);
+        return Category::paginate($perPage);
     }
 
     public function create(array $data)
@@ -30,13 +19,15 @@ class CategoryRepository
 
     public function update(Category $category, array $data)
     {
-        $category->update($data);
-        return $category;
+        return tap($category, function ($category) use ($data) {
+            $category->update($data);
+
+            Log::info('Category updated', ['category_id' => $category->id]);
+        });
     }
 
     public function delete(Category $category)
     {
         $category->delete();
-        return true;
     }
 }

@@ -2,48 +2,39 @@
 
 namespace App\Services;
 
+use App\Models\Category;
+use App\DTOs\CategoryDTO;
 use App\Repositories\CategoryRepository;
 
 class CategoryService
 {
-
     public function __construct(private CategoryRepository $categoryRepository)
     {
     }
 
-    public function getAllCategories()
+    public function getAll()
     {
         return $this->categoryRepository->getAll();
     }
 
-     public function getNotesByCategory($categoryName)
-     {
-         return $this->categoryRepository->getNotesByCategory($categoryName);
-     }
-
-    public function findCategoryById($id)
+    public function create(CategoryDTO $dto)
     {
-        return $this->categoryRepository->findById($id);
+        return $this->categoryRepository->create([
+            'name' => $dto->name,
+            'parent_id' => $dto->parent_id,
+        ]);
     }
 
-    public function createCategory(array $data)
+    public function update(Category $category, CategoryDTO $dto)
     {
-        return $this->categoryRepository->create($data);
+        return $this->categoryRepository->update($category, [
+            'name' => $dto->name,
+            'parent_id' => $dto->parent_id,
+        ]);
     }
 
-    public function updateCategory($id, array $data)
+    public function delete(Category $category)
     {
-        $category = $this->categoryRepository->findById($id);
-
-        if (!$category) {
-            throw new \Exception('Category not found');
-        }
-
-        return $this->categoryRepository->update($category, $data);
-    }
-
-    public function deleteCategory($category)
-    {
-        return $this->categoryRepository->delete($category);
+        $this->categoryRepository->delete($category);
     }
 }

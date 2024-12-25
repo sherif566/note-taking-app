@@ -3,17 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\Note;
+use Illuminate\Support\Facades\Log;
 
 class NoteRepository
 {
-    public function getAll()
+    public function getAll($perPage = 10)
     {
-        return Note::with('category')->get();
-    }
-
-    public function findById($id)
-    {
-        return Note::find($id);
+        return Note::with('category')->paginate($perPage);
     }
 
     public function create(array $data)
@@ -23,8 +19,11 @@ class NoteRepository
 
     public function update(Note $note, array $data)
     {
-        $note->update($data);
-        return $note;
+        return tap($note, function ($note) use ($data) {
+            $note->update($data);
+
+            Log::info('Note updated', ['note_id' => $note->id]);
+        });
     }
 
     public function delete(Note $note)

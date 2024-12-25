@@ -4,60 +4,67 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Note;
+use App\DTOs\NoteDTO;
 use App\Repositories\NoteRepository;
 
 class NoteService
 {
-
     public function __construct(private NoteRepository $noteRepository)
     {
     }
 
     // General Methods (for all notes)
 
-    public function getAllNotes()
+    public function getAll()
     {
         return $this->noteRepository->getAll();
     }
 
-    public function findNoteById($id)
+    public function create(NoteDTO $dto)
     {
-        return $this->noteRepository->findById($id);
+        return $this->noteRepository->create([
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'category_id' => $dto->category_id,
+        ]);
     }
 
-    public function createNote(array $data)
+    public function update(Note $note, NoteDTO $dto)
     {
-        return $this->noteRepository->create($data);
+        return $this->noteRepository->update($note, [
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'category_id' => $dto->category_id,
+        ]);
     }
 
-    public function updateNote($id, array $data)
-    {
-        $note = $this->noteRepository->findById($id);
-        return $this->noteRepository->update($note, $data);
-    }
-
-    public function deleteNote(Note $note)
+    public function delete(Note $note)
     {
         return $this->noteRepository->delete($note);
     }
 
-
-
-
     ////////////////////////////// Category-Specific Methods //////////////////////////////////////
 
-    public function createNoteInCategory(array $data, Category $category)
+    public function createNoteInCategory(NoteDTO $dto, Category $category)
     {
-        $data['category_id'] = $category->id;
-        return $this->noteRepository->create($data);
+        return $this->noteRepository->create([
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'category_id' => $category->id,
+        ]);
     }
 
-    public function updateNoteInCategory(array $data, Category $category, Note $note)
+    public function updateNoteInCategory(Note $note,NoteDTO $dto, Category $category)
     {
         if ($note->category_id !== $category->id) {
             throw new \Exception('Note does not belong to this category');
         }
-        return $this->noteRepository->update($note, $data);
+
+        return $this->noteRepository->update($note, [
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'category_id' => $category->id,
+        ]);
     }
 
     public function deleteNoteFromCategory(Category $category, Note $note)
@@ -65,6 +72,7 @@ class NoteService
         if ($note->category_id !== $category->id) {
             throw new \Exception('Note does not belong to this category');
         }
+
         return $this->noteRepository->delete($note);
     }
 }
