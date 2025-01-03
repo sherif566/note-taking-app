@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\RepositoryInterface;
 use App\DTOs\NoteDTO;
 use App\Models\Note;
 use App\Models\Category;
