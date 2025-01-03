@@ -8,7 +8,7 @@ use App\DTOs\CategoryDTO;
 use Illuminate\Http\Response;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use Illuminate\Support\Facades\Log; // Import the Log facade
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {

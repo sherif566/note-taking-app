@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\RepositoryInterface;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 

@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Repositories;
-
-use App\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\RepositoryInterface;
 use App\Models\Note;
 use Illuminate\Support\Facades\Log;
 
