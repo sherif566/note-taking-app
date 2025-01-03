@@ -2,15 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\NoteRepositoryInterface;
+use App\Interfaces\RepositoryInterface;
 use App\Models\Note;
 use Illuminate\Support\Facades\Log;
 
-class NoteRepository implements NoteRepositoryInterface
+class NoteRepository implements RepositoryInterface
 {
     public function all($perPage = 10)
     {
-        // Corresponds to `getAll` in the interface; we rename it to `all` to match the interface signature
         return Note::with('category')->paginate($perPage);
     }
 
@@ -21,7 +20,6 @@ class NoteRepository implements NoteRepositoryInterface
 
     public function update($note, $data)
     {
-        // Ensure type hinting and parameter names align with the interface
         if (!($note instanceof Note)) {
             throw new \InvalidArgumentException("Expected instance of Note.");
         }

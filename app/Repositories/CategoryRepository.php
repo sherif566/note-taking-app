@@ -2,11 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\CategoryRepositoryInterface;
+use App\Interfaces\RepositoryInterface;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 
-class CategoryRepository implements CategoryRepositoryInterface
+class CategoryRepository implements RepositoryInterface
 {
     public function all($perPage = 10)
     {

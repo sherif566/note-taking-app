@@ -11,9 +11,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(\App\Interfaces\NoteRepositoryInterface::class, \App\Repositories\NoteRepository::class);
-        $this->app->bind(\App\Interfaces\CategoryRepositoryInterface::class, \App\Repositories\CategoryRepository::class);
+        $this->app->when(\App\Services\NoteService::class)
+                  ->needs(\App\Interfaces\RepositoryInterface::class)
+                  ->give(\App\Repositories\NoteRepository::class);
 
+        $this->app->when(\App\Services\CategoryService::class)
+                  ->needs(\App\Interfaces\RepositoryInterface::class)
+                  ->give(\App\Repositories\CategoryRepository::class);
     }
 
     /**

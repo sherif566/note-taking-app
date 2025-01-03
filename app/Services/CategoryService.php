@@ -4,14 +4,13 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\DTOs\CategoryDTO;
-use App\Repositories\CategoryRepository;
-use App\Interfaces\CategoryRepositoryInterface;
+use App\Interfaces\RepositoryInterface;
 
 class CategoryService
 {
-    private CategoryRepositoryInterface $categoryRepository;
+    private RepositoryInterface $categoryRepository;
 
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    public function __construct(RepositoryInterface $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }

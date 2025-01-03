@@ -6,15 +6,22 @@ use App\Models\Category;
 use App\Models\Note;
 use App\DTOs\NoteDTO;
 use App\Repositories\NoteRepository;
-use App\Interfaces\NoteRepositoryInterface;
+use App\Interfaces\RepositoryInterface;
 
 class NoteService
 {
-    private NoteRepositoryInterface $noteRepository;
+    private RepositoryInterface $noteRepository;
 
-    public function __construct(NoteRepositoryInterface $noteRepository)
+    public function __construct(RepositoryInterface $noteRepository)
     {
         $this->noteRepository = $noteRepository;
+    }
+
+    private function validateNoteCategory(Note $note, Category $category)
+    {
+        if ($note->category_id !== $category->id) {
+            throw new \Exception('Note does not belong to this category');
+        }
     }
     // General Methods (for all notes)
 
@@ -57,12 +64,9 @@ class NoteService
         ]);
     }
 
-    public function updateNoteInCategory(Note $note,NoteDTO $dto, Category $category)
+    public function updateNoteInCategory(Note $note, NoteDTO $dto, Category $category)
     {
-        if ($note->category_id !== $category->id) {
-            throw new \Exception('Note does not belong to this category');
-        }
-
+        $this->validateNoteCategory($note, $category);
         return $this->noteRepository->update($note, [
             'title' => $dto->title,
             'description' => $dto->description,
@@ -72,10 +76,8 @@ class NoteService
 
     public function deleteNoteFromCategory(Category $category, Note $note)
     {
-        if ($note->category_id !== $category->id) {
-            throw new \Exception('Note does not belong to this category');
-        }
-
+        $this->validateNoteCategory($note, $category);
         return $this->noteRepository->delete($note);
     }
 }
+

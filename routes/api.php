@@ -20,11 +20,5 @@ Route::apiResource('categories', CategoryController::class);
 Route::apiResource('notes', NoteController::class);
 
 Route::prefix('categories')->group(function () {
-    Route::get('{category}/notes', [NoteController::class, 'getCategoryNotes']);
-
-    Route::post('{category}/notes', [NoteController::class, 'storeInCategory']);
-
-    Route::put('{category}/notes/{note}', [NoteController::class, 'updateInCategory']);
-
-    Route::delete('{category}/notes/{note}', [NoteController::class, 'destroyFromCategory']);
+    Route::apiResource('{category}/notes', NoteController::class);
 });
