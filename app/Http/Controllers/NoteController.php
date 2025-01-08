@@ -1,15 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Response;
 use App\Http\Requests\NoteRequest;
 use App\Services\NoteService;
 use App\DTOs\NoteDTO;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
-use App\Models\Category;
 
 class NoteController extends Controller
 {
@@ -17,18 +17,18 @@ class NoteController extends Controller
     {
     }
 
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         $notes = $this->noteService->getAll();
         return NoteResource::collection($notes);
     }
 
-    public function show(Note $note)
+    public function show(Note $note): NoteResource
     {
         return new NoteResource($note);
     }
 
-    public function store(NoteRequest $request)
+    public function store(NoteRequest $request): NoteResource
     {
         $dto = new NoteDTO(
             title: $request->get('title'),
@@ -42,7 +42,7 @@ class NoteController extends Controller
         return new NoteResource($note);
     }
 
-    public function update(NoteRequest $request, Note $note)
+    public function update(NoteRequest $request, Note $note): NoteResource
     {
         $dto = new NoteDTO(
             title: $request->get('title'),
@@ -56,12 +56,11 @@ class NoteController extends Controller
         return new NoteResource($updatedNote);
     }
 
-    public function destroy(Note $note)
+    public function destroy(Note $note): JsonResponse
     {
         Log::info("Deleting note", ['note_id' => $note->id]);
         $this->noteService->delete($note);
         Log::info("Note deleted successfully", ['note_id' => $note->id]);
         return response()->json(['message' => 'Note deleted successfully'], Response::HTTP_OK);
     }
-
 }

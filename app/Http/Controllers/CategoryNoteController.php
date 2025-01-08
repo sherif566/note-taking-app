@@ -6,6 +6,8 @@ use App\Http\Requests\NoteRequest;
 use App\Services\CategoryNoteService;
 use App\DTOs\NoteDTO;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\NoteResource;
 use App\Models\Category;
@@ -20,14 +22,13 @@ class CategoryNoteController extends Controller
         $this->categorynoteService = $categorynoteService;
     }
 
-    public function index($category)
+    public function index($category): AnonymousResourceCollection
     {
         $notes = Note::where('category_id', $category)->paginate(10);
         return NoteResource::collection($notes);
     }
 
-
-    public function store(NoteRequest $request, Category $category)
+    public function store(NoteRequest $request, Category $category): NoteResource
     {
         $dto = new NoteDTO(
             title: $request->get('title'),
@@ -39,13 +40,13 @@ class CategoryNoteController extends Controller
 
         Log::info("Note created in category successfully", [
             'category_id' => $category->id,
-            'note' => $note
+            'note_id' => $note->id
         ]);
 
         return new NoteResource($note);
     }
 
-    public function update(NoteRequest $request, Category $category, Note $note)
+    public function update(NoteRequest $request, Category $category, Note $note): NoteResource
     {
         if ($note->category_id !== $category->id) {
             return response()->json(['error' => 'Note does not belong to this category'], Response::HTTP_NOT_FOUND);
@@ -61,13 +62,13 @@ class CategoryNoteController extends Controller
 
         Log::info("Note updated in category successfully", [
             'category_id' => $category->id,
-            'note' => $updatedNote
+            'note_id' => $updatedNote->id
         ]);
 
         return new NoteResource($updatedNote);
     }
 
-    public function destroy(Category $category, Note $note)
+    public function destroy(Category $category, Note $note): JsonResponse
     {
         if ($note->category_id !== $category->id) {
             return response()->json(['error' => 'Note does not belong to this category'], Response::HTTP_NOT_FOUND);
