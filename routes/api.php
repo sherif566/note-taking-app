@@ -12,10 +12,6 @@ use App\Http\Controllers\CategoryNoteController;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::apiResource('categories', CategoryController::class);
 
 Route::apiResource('notes', NoteController::class);
