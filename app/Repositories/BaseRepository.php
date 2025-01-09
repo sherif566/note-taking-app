@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 use App\Repositories\Interfaces\CRUDInterface;
-
+use App\Utilities\Constants;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -15,7 +15,7 @@ abstract class BaseRepository implements CRUDInterface
         $this->model = $model;
     }
 
-    public function all($perPage = 10): LengthAwarePaginator
+    public function all($perPage = Constants::DEFAULT_PAGINATION): LengthAwarePaginator
     {
         return $this->model->paginate($perPage);
     }
