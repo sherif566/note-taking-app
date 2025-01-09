@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\Interfaces\RepositoryInterface;
 use App\DTOs\NoteDTO;
 use App\Models\Note;
+use Illuminate\Database\Eloquent\Collection;
 
 class NoteService
 {
@@ -15,22 +16,21 @@ class NoteService
         $this->noteRepository = $noteRepository;
     }
 
-
-    public function getAll($search = null)
+    public function getAll($search = null): Collection
     {
-    $query = Note::query();
+        $query = Note::query();
 
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('title', 'LIKE', "%{$search}%")
-              ->orWhere('description', 'LIKE', "%{$search}%");
-        });
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
+
+        return $query->get();
     }
 
-    return $query->get();
-    }
-
-    public function create(NoteDTO $dto)
+    public function create(NoteDTO $dto): Note
     {
         return $this->noteRepository->create([
             'title' => $dto->title,
@@ -39,7 +39,7 @@ class NoteService
         ]);
     }
 
-    public function update(Note $note, NoteDTO $dto)
+    public function update(Note $note, NoteDTO $dto): Note
     {
         return $this->noteRepository->update($note, [
             'title' => $dto->title,
@@ -48,7 +48,7 @@ class NoteService
         ]);
     }
 
-    public function delete(Note $note)
+    public function delete(Note $note): bool
     {
         return $this->noteRepository->delete($note);
     }

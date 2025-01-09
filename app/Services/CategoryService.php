@@ -14,12 +14,13 @@ class CategoryService
     {
         $this->categoryRepository = $categoryRepository;
     }
-    public function getAll()
+
+    public function getAll(): \Illuminate\Database\Eloquent\Collection
     {
         return $this->categoryRepository->all();
     }
 
-    public function create(CategoryDTO $dto)
+    public function create(CategoryDTO $dto): Category
     {
         return $this->categoryRepository->create([
             'name' => $dto->name,
@@ -27,7 +28,7 @@ class CategoryService
         ]);
     }
 
-    public function update(Category $category, CategoryDTO $dto)
+    public function update(Category $category, CategoryDTO $dto): Category
     {
         return $this->categoryRepository->update($category, [
             'name' => $dto->name,
@@ -35,8 +36,8 @@ class CategoryService
         ]);
     }
 
-    public function delete(Category $category)
+    public function delete(Category $category): bool
     {
-        $this->categoryRepository->delete($category);
+        return $this->categoryRepository->delete($category);
     }
 }
