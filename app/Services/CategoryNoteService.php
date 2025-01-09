@@ -2,49 +2,42 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\CRUDInterface;
-use App\DTOs\NoteDTO;
-use App\Models\Note;
 use App\Models\Category;
+use App\Models\Note;
+use App\DTOs\NoteDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Config\PaginationConfig;
 
 class CategoryNoteService
 {
-    private CRUDInterface $noteRepository;
-
-    public function __construct(CRUDInterface $noteRepository)
+    public function getall(Category $category): LengthAwarePaginator
     {
-        $this->noteRepository = $noteRepository;
+        return $category->notes()->paginate(PaginationConfig::defaultSize());
     }
 
-    private function validate(Note $note, Category $category)
+    public function create(array $data, Category $category): Note
+    {
+        $dto = new NoteDTO($data['title'], $data['description'], $category->id);
+        return Note::create($dto->toArray());
+    }
+
+    public function update(array $data, Category $category, Note $note): Note
     {
         if ($note->category_id !== $category->id) {
             throw new \Exception('Note does not belong to this category');
         }
+
+        $dto = new NoteDTO($data['title'], $data['description'], $category->id);
+        $note->update($dto->toArray());
+        return $note;
     }
 
-    public function create(NoteDTO $dto, Category $category)
+    public function delete(Category $category, Note $note): void
     {
-        return $this->noteRepository->create([
-            'title' => $dto->title,
-            'description' => $dto->description,
-            'category_id' => $category->id,
-        ]);
-    }
+        if ($note->category_id !== $category->id) {
+            throw new \Exception('Note does not belong to this category');
+        }
 
-    public function update(Note $note, NoteDTO $dto, Category $category)
-    {
-        $this->validate($note, $category);
-        return $this->noteRepository->update($note, [
-            'title' => $dto->title,
-            'description' => $dto->description,
-            'category_id' => $category->id,
-        ]);
-    }
-
-    public function delete(Category $category, Note $note)
-    {
-        $this->validate($note, $category);
-        return $this->noteRepository->delete($note);
+        $note->delete();
     }
 }
