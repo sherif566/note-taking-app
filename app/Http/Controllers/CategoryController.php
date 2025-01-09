@@ -30,11 +30,12 @@ class CategoryController extends Controller
 
         if ($search = $request->input('search')) {
             $query->where('name', 'LIKE', "%{$search}%");
+            Log::info('Searching categories', ['search' => $search]);
         }
 
         $categories = $query->get();
-
         Log::info('Retrieved categories based on search criteria.');
+
         return $this->success(CategoryResource::collection($categories), 'Categories retrieved successfully');
     }
 
@@ -46,24 +47,43 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request): JsonResponse
     {
-        $dto = new CategoryDTO($request->validated());
-        $category = $this->categoryService->create($dto);
-        Log::info('Created a new category', ['category_id' => $category->id]);
-        return $this->success(new CategoryResource($category), 'Category created successfully', JsonResponse::HTTP_CREATED);
+        $validated = $request->validated();  // Ensure data is validated
+        $dto = new CategoryDTO($validated['name'], $validated['parent_id'] ?? null);
+
+        try {
+            $category = $this->categoryService->create($dto);
+            Log::info('Created a new category', ['category_id' => $category->id]);
+            return $this->success(new CategoryResource($category), 'Category created successfully', JsonResponse::HTTP_CREATED);
+        } catch (\Exception $e) {
+            Log::error('Failed to create category', ['error' => $e->getMessage()]);
+            return $this->error('Failed to create category', [], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function update(CategoryRequest $request, Category $category): JsonResponse
     {
-        $dto = new CategoryDTO($request->validated());
-        $updatedCategory = $this->categoryService->update($category, $dto);
-        Log::info('Updated category', ['category_id' => $updatedCategory->id]);
-        return $this->success(new CategoryResource($updatedCategory), 'Category updated successfully');
+        $validated = $request->validated();
+        $dto = new CategoryDTO($validated['name'], $validated['parent_id'] ?? null);
+
+        try {
+            $updatedCategory = $this->categoryService->update($category, $dto);
+            Log::info('Updated category', ['category_id' => $updatedCategory->id]);
+            return $this->success(new CategoryResource($updatedCategory), 'Category updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update category', ['error' => $e->getMessage()]);
+            return $this->error('Failed to update category', [], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function destroy(Category $category): JsonResponse
     {
-        $this->categoryService->delete($category);
-        Log::info('Deleted category', ['category_id' => $category->id]);
-        return $this->success(null, 'Category deleted successfully', JsonResponse::HTTP_OK);
+        try {
+            $this->categoryService->delete($category);
+            Log::info('Deleted category', ['category_id' => $category->id]);
+            return $this->success(null, 'Category deleted successfully', JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete category', ['error' => $e->getMessage()]);
+            return $this->error('Failed to delete category', [], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

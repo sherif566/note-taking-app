@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NoteRequest;
 use App\Services\CategoryNoteService;
 use App\DTOs\NoteDTO;
-use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\NoteResource;
 use App\Models\Category;
 use App\Models\Note;
+use App\Traits\RespondsWithHttpStatus;
 
 class CategoryNoteController extends Controller
 {
+    use RespondsWithHttpStatus;
+
     private CategoryNoteService $categorynoteService;
 
     public function __construct(CategoryNoteService $categorynoteService)
@@ -22,18 +24,19 @@ class CategoryNoteController extends Controller
         $this->categorynoteService = $categorynoteService;
     }
 
-    public function index($category): AnonymousResourceCollection
+    public function index($category): JsonResponse
     {
         $notes = Note::where('category_id', $category)->paginate(10);
-        return NoteResource::collection($notes);
+        Log::info('Retrieved notes for category', ['category_id' => $category]);
+        return $this->success(NoteResource::collection($notes), 'Notes retrieved successfully');
     }
 
-    public function store(NoteRequest $request, Category $category): NoteResource
+    public function store(NoteRequest $request, Category $category): JsonResponse
     {
         $dto = new NoteDTO(
-            title: $request->get('title'),
-            description: $request->get('description'),
-            category_id: $category->id
+            $request->get('title'),
+            $request->get('description'),
+            $category->id
         );
 
         $note = $this->categorynoteService->createNoteInCategory($dto, $category);
@@ -43,19 +46,19 @@ class CategoryNoteController extends Controller
             'note_id' => $note->id
         ]);
 
-        return new NoteResource($note);
+        return $this->success(new NoteResource($note), 'Note created successfully', JsonResponse::HTTP_CREATED);
     }
 
-    public function update(NoteRequest $request, Category $category, Note $note): NoteResource
+    public function update(NoteRequest $request, Category $category, Note $note): JsonResponse
     {
         if ($note->category_id !== $category->id) {
-            return response()->json(['error' => 'Note does not belong to this category'], Response::HTTP_NOT_FOUND);
+            return $this->error('Note does not belong to this category', [], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $dto = new NoteDTO(
-            title: $request->get('title'),
-            description: $request->get('description'),
-            category_id: $category->id
+            $request->get('title'),
+            $request->get('description'),
+            $category->id
         );
 
         $updatedNote = $this->categorynoteService->updateNoteInCategory($note, $dto, $category);
@@ -65,27 +68,22 @@ class CategoryNoteController extends Controller
             'note_id' => $updatedNote->id
         ]);
 
-        return new NoteResource($updatedNote);
+        return $this->success(new NoteResource($updatedNote), 'Note updated successfully');
     }
 
     public function destroy(Category $category, Note $note): JsonResponse
     {
         if ($note->category_id !== $category->id) {
-            return response()->json(['error' => 'Note does not belong to this category'], Response::HTTP_NOT_FOUND);
+            return $this->error('Note does not belong to this category', [], JsonResponse::HTTP_NOT_FOUND);
         }
+
+        $this->categorynoteService->deleteNoteFromCategory($category, $note);
 
         Log::info("Deleting note from category", [
             'category_id' => $category->id,
             'note_id' => $note->id
         ]);
 
-        $this->categorynoteService->deleteNoteFromCategory($category, $note);
-
-        Log::info("Note deleted from category successfully", [
-            'category_id' => $category->id,
-            'note_id' => $note->id
-        ]);
-
-        return response()->json(['message' => 'Note deleted successfully'], Response::HTTP_OK);
+        return $this->success(null, 'Note deleted successfully', JsonResponse::HTTP_OK);
     }
 }
