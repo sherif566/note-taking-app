@@ -1,29 +1,33 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
 use App\Services\CategoryService;
 use App\DTOs\CategoryDTO;
-use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
+use App\Traits\RespondsWithHttpStatus;
 
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryService $categoryService)
+    use RespondsWithHttpStatus;
+
+    private CategoryService $categoryService;
+
+    public function __construct(CategoryService $categoryService)
     {
+        $this->categoryService = $categoryService;
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $query = Category::query();
 
-        // Check if a search term was provided.
         if ($search = $request->input('search')) {
             $query->where('name', 'LIKE', "%{$search}%");
         }
@@ -31,44 +35,35 @@ class CategoryController extends Controller
         $categories = $query->get();
 
         Log::info('Retrieved categories based on search criteria.');
-        return CategoryResource::collection($categories);
+        return $this->success(CategoryResource::collection($categories), 'Categories retrieved successfully');
     }
 
-
-    public function show(Category $category): CategoryResource
+    public function show(Category $category): JsonResponse
     {
         Log::info('Displayed category', ['category_id' => $category->id]);
-        return new CategoryResource($category);
+        return $this->success(new CategoryResource($category), 'Category details retrieved successfully');
     }
 
-    public function store(CategoryRequest $request): CategoryResource
+    public function store(CategoryRequest $request): JsonResponse
     {
-        $dto = new CategoryDTO(
-            name: $request->get('name'),
-            parent_id: $request->get('parent_id')
-        );
-
+        $dto = new CategoryDTO($request->validated());
         $category = $this->categoryService->create($dto);
         Log::info('Created a new category', ['category_id' => $category->id]);
-        return new CategoryResource($category);
+        return $this->success(new CategoryResource($category), 'Category created successfully', JsonResponse::HTTP_CREATED);
     }
 
-    public function update(CategoryRequest $request, Category $category): CategoryResource
+    public function update(CategoryRequest $request, Category $category): JsonResponse
     {
-        $dto = new CategoryDTO(
-            name: $request->get('name'),
-            parent_id: $request->get('parent_id')
-        );
-
+        $dto = new CategoryDTO($request->validated());
         $updatedCategory = $this->categoryService->update($category, $dto);
-        Log::info('Updated category', ['category_id' => $category->id]);
-        return new CategoryResource($updatedCategory);
+        Log::info('Updated category', ['category_id' => $updatedCategory->id]);
+        return $this->success(new CategoryResource($updatedCategory), 'Category updated successfully');
     }
 
     public function destroy(Category $category): JsonResponse
     {
         $this->categoryService->delete($category);
         Log::info('Deleted category', ['category_id' => $category->id]);
-        return response()->json(['message' => 'Category deleted successfully'], Response::HTTP_OK);
+        return $this->success(null, 'Category deleted successfully', JsonResponse::HTTP_OK);
     }
 }

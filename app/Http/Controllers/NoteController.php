@@ -9,6 +9,7 @@ use App\DTOs\NoteDTO;
 use App\Http\Resources\NoteResource;
 use App\Traits\RespondsWithHttpStatus;
 use App\Models\Note;
+use Illuminate\Support\Facades\Log;
 
 class NoteController extends Controller
 {
@@ -24,52 +25,46 @@ class NoteController extends Controller
     public function index(Request $request)
     {
         $notes = $this->noteService->getAll($request->input('search'));
+        Log::info('Retrieving all notes', ['search' => $request->input('search')]);
         return $this->success(NoteResource::collection($notes), 'Notes retrieved successfully');
     }
 
     public function show(Note $note)
     {
+        Log::info('Displaying note', ['note_id' => $note->id]);
         return $this->success(new NoteResource($note), 'Note details retrieved successfully');
     }
 
     public function store(NoteRequest $request)
     {
-        // Retrieve validated data
         $validated = $request->validated();
+        $dto = new NoteDTO($validated['title'], $validated['description'], $validated['category_id'] ?? null);
 
-        // Create DTO with all necessary parameters
-        $dto = new NoteDTO(
-            $validated['title'],
-            $validated['description'],
-            $validated['category_id'] ?? null  // Use null-coalescing operator for optional parameters
-        );
-
-        // Proceed with your service layer
+        Log::info('Attempting to create a note', ['data' => $validated]);
         $note = $this->noteService->create($dto);
+        Log::info('Note created successfully', ['note_id' => $note->id]);
+
         return $this->success(new NoteResource($note), 'Note created successfully', 201);
     }
 
-
     public function update(NoteRequest $request, Note $note)
     {
-        // Retrieve validated data
         $validated = $request->validated();
+        $dto = new NoteDTO($validated['title'], $validated['description'], $validated['category_id'] ?? null);
 
-        // Create DTO with all necessary parameters
-        $dto = new NoteDTO(
-            $validated['title'],
-            $validated['description'],
-            $validated['category_id'] ?? null  // Use null-coalescing operator for optional parameters
-        );
-
-        // Proceed with your service layer
+        Log::info('Attempting to update note', ['note_id' => $note->id, 'data' => $validated]);
         $updatedNote = $this->noteService->update($note, $dto);
+        Log::info('Note updated successfully', ['note_id' => $updatedNote->id]);
+
         return $this->success(new NoteResource($updatedNote), 'Note updated successfully');
     }
 
     public function destroy(Note $note)
     {
+        Log::info('Attempting to delete note', ['note_id' => $note->id]);
         $this->noteService->delete($note);
+        Log::info('Note deleted successfully', ['note_id' => $note->id]);
+
         return $this->success(null, 'Note deleted successfully', 200);
     }
 }
