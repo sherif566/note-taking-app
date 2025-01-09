@@ -39,7 +39,7 @@ class CategoryNoteController extends Controller
             $category->id
         );
 
-        $note = $this->categorynoteService->createNoteInCategory($dto, $category);
+        $note = $this->categorynoteService->create($dto, $category);
 
         Log::info("Note created in category successfully", [
             'category_id' => $category->id,
@@ -61,7 +61,7 @@ class CategoryNoteController extends Controller
             $category->id
         );
 
-        $updatedNote = $this->categorynoteService->updateNoteInCategory($note, $dto, $category);
+        $updatedNote = $this->categorynoteService->update($note, $dto, $category);
 
         Log::info("Note updated in category successfully", [
             'category_id' => $category->id,
@@ -77,7 +77,7 @@ class CategoryNoteController extends Controller
             return $this->error('Note does not belong to this category', [], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $this->categorynoteService->deleteNoteFromCategory($category, $note);
+        $this->categorynoteService->delete($category, $note);
 
         Log::info("Deleting note from category", [
             'category_id' => $category->id,

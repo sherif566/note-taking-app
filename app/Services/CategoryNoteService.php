@@ -16,14 +16,14 @@ class CategoryNoteService
         $this->noteRepository = $noteRepository;
     }
 
-    private function validateNoteCategory(Note $note, Category $category)
+    private function validate(Note $note, Category $category)
     {
         if ($note->category_id !== $category->id) {
             throw new \Exception('Note does not belong to this category');
         }
     }
 
-    public function createNoteInCategory(NoteDTO $dto, Category $category)
+    public function create(NoteDTO $dto, Category $category)
     {
         return $this->noteRepository->create([
             'title' => $dto->title,
@@ -32,9 +32,9 @@ class CategoryNoteService
         ]);
     }
 
-    public function updateNoteInCategory(Note $note, NoteDTO $dto, Category $category)
+    public function update(Note $note, NoteDTO $dto, Category $category)
     {
-        $this->validateNoteCategory($note, $category);
+        $this->validate($note, $category);
         return $this->noteRepository->update($note, [
             'title' => $dto->title,
             'description' => $dto->description,
@@ -42,9 +42,9 @@ class CategoryNoteService
         ]);
     }
 
-    public function deleteNoteFromCategory(Category $category, Note $note)
+    public function delete(Category $category, Note $note)
     {
-        $this->validateNoteCategory($note, $category);
+        $this->validate($note, $category);
         return $this->noteRepository->delete($note);
     }
 }
