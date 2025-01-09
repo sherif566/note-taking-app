@@ -15,9 +15,19 @@ class NoteService
         $this->noteRepository = $noteRepository;
     }
 
-    public function getAll()
+
+    public function getAll($search = null)
     {
-        return $this->noteRepository->all();
+    $query = Note::query();
+
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('description', 'LIKE', "%{$search}%");
+        });
+    }
+
+    return $query->get();
     }
 
     public function create(NoteDTO $dto)

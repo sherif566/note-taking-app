@@ -1,80 +1,75 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Response;
+
+use Illuminate\Http\Request;
 use App\Http\Requests\NoteRequest;
 use App\Services\NoteService;
 use App\DTOs\NoteDTO;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Log;
 use App\Http\Resources\NoteResource;
+use App\Traits\RespondsWithHttpStatus;
 use App\Models\Note;
-use Illuminate\Http\Request;
-
 
 class NoteController extends Controller
 {
-    public function __construct(private NoteService $noteService)
+    use RespondsWithHttpStatus;
+
+    private NoteService $noteService;
+
+    public function __construct(NoteService $noteService)
     {
+        $this->noteService = $noteService;
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
-        $query = Note::query();
-
-        if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $notes = $query->get();
-
-        Log::info('Retrieved notes based on search criteria');
-        return NoteResource::collection($notes);
+        $notes = $this->noteService->getAll($request->input('search'));
+        return $this->success(NoteResource::collection($notes), 'Notes retrieved successfully');
     }
 
-
-    public function show(Note $note): NoteResource
+    public function show(Note $note)
     {
-        return new NoteResource($note);
+        return $this->success(new NoteResource($note), 'Note details retrieved successfully');
     }
 
-    public function store(NoteRequest $request): NoteResource
+    public function store(NoteRequest $request)
     {
+        // Retrieve validated data
+        $validated = $request->validated();
+
+        // Create DTO with all necessary parameters
         $dto = new NoteDTO(
-            title: $request->get('title'),
-            description: $request->get('description'),
-            category_id: $request->get('category_id')
+            $validated['title'],
+            $validated['description'],
+            $validated['category_id'] ?? null  // Use null-coalescing operator for optional parameters
         );
 
+        // Proceed with your service layer
         $note = $this->noteService->create($dto);
-
-        Log::info("Note created successfully", ['note' => $note]);
-        return new NoteResource($note);
+        return $this->success(new NoteResource($note), 'Note created successfully', 201);
     }
 
-    public function update(NoteRequest $request, Note $note): NoteResource
+
+    public function update(NoteRequest $request, Note $note)
     {
+        // Retrieve validated data
+        $validated = $request->validated();
+
+        // Create DTO with all necessary parameters
         $dto = new NoteDTO(
-            title: $request->get('title'),
-            description: $request->get('description'),
-            category_id: $request->get('category_id')
+            $validated['title'],
+            $validated['description'],
+            $validated['category_id'] ?? null  // Use null-coalescing operator for optional parameters
         );
 
+        // Proceed with your service layer
         $updatedNote = $this->noteService->update($note, $dto);
-
-        Log::info("Note updated successfully", ['note' => $updatedNote]);
-        return new NoteResource($updatedNote);
+        return $this->success(new NoteResource($updatedNote), 'Note updated successfully');
     }
 
-    public function destroy(Note $note): JsonResponse
+    public function destroy(Note $note)
     {
-        Log::info("Deleting note", ['note_id' => $note->id]);
         $this->noteService->delete($note);
-        Log::info("Note deleted successfully", ['note_id' => $note->id]);
-        return response()->json(['message' => 'Note deleted successfully'], Response::HTTP_OK);
+        return $this->success(null, 'Note deleted successfully', 200);
     }
 }
