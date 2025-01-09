@@ -5,7 +5,7 @@ namespace App\Repositories\Interfaces;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-interface RepositoryInterface
+interface CRUDInterface
 {
     public function all($perPage = 10): LengthAwarePaginator;
     public function create(array $data): Model;

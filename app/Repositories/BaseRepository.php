@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Repositories;
-use App\Repositories\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\CRUDInterface;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-abstract class BaseRepository implements RepositoryInterface
+abstract class BaseRepository implements CRUDInterface
 {
     protected Model $model;
 

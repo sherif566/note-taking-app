@@ -4,14 +4,14 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\DTOs\CategoryDTO;
-use App\Repositories\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\CRUDInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class CategoryService
 {
-    private RepositoryInterface $categoryRepository;
+    private CRUDInterface $categoryRepository;
 
-    public function __construct(RepositoryInterface $categoryRepository)
+    public function __construct(CRUDInterface $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }

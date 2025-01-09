@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\CRUDInterface;
 use App\DTOs\NoteDTO;
 use App\Models\Note;
 use App\Models\Category;
 
 class CategoryNoteService
 {
-    private RepositoryInterface $noteRepository;
+    private CRUDInterface $noteRepository;
 
-    public function __construct(RepositoryInterface $noteRepository)
+    public function __construct(CRUDInterface $noteRepository)
     {
         $this->noteRepository = $noteRepository;
     }
