@@ -10,10 +10,6 @@ A Laravel-based web application designed to streamline note-taking and organizat
 
 ## **Table of Contents**
 - [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Development Standards](#development-standards)
 ---
 
 ## **Features**
