@@ -46,7 +46,7 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request): JsonResponse
     {
-        $dto = new CategoryDTO($request->validated());
+        $dto = CategoryDTO::from($request->validated());
         $category = $this->categoryService->create($dto);
         Log::info('Created a new category', ['category_id' => $category->id]);
         return $this->success(new CategoryResource($category), 'Category created successfully', JsonResponse::HTTP_CREATED);
@@ -54,7 +54,7 @@ class CategoryController extends Controller
 
     public function update(CategoryRequest $request, Category $category): JsonResponse
     {
-        $dto = new CategoryDTO($request->validated());
+        $dto = CategoryDTO::from($request->validated());
         $updatedCategory = $this->categoryService->update($category, $dto);
         Log::info('Updated category', ['category_id' => $updatedCategory->id]);
         return $this->success(new CategoryResource($updatedCategory), 'Category updated successfully');

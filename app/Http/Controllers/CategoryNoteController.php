@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NoteRequest;
 use App\Services\CategoryNoteService;
+use App\DTOs\NoteDTO;
 use App\Http\Resources\NoteResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,7 @@ class CategoryNoteController extends Controller
 
     public function index(Category $category): JsonResponse
     {
-        $notes = $this->categoryNoteService->getall($category);
+        $notes = $this->categoryNoteService->getAll($category);
 
         Log::info('Retrieved notes for category', [
             'category_id' => $category->id,
@@ -36,7 +37,9 @@ class CategoryNoteController extends Controller
 
     public function store(NoteRequest $request, Category $category): JsonResponse
     {
-        $note = $this->categoryNoteService->create($request->validated(), $category);
+        $dto = NoteDTO::from($request->validated() + ['category_id' => $category->id]);
+
+        $note = $this->categoryNoteService->create($dto->toArray(), $category);
 
         Log::info('Note created successfully in category', [
             'category_id' => $category->id,
@@ -48,7 +51,9 @@ class CategoryNoteController extends Controller
 
     public function update(NoteRequest $request, Category $category, Note $note): JsonResponse
     {
-        $updatedNote = $this->categoryNoteService->update($request->validated(), $category, $note);
+        $dto = NoteDTO::from($request->validated() + ['category_id' => $category->id]);
+
+        $updatedNote = $this->categoryNoteService->update($dto->toArray(), $category, $note);
 
         Log::info('Note updated successfully in category', [
             'category_id' => $category->id,
