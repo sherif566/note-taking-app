@@ -37,10 +37,9 @@ class NoteController extends Controller
 
     public function store(NoteRequest $request)
     {
-        $validated = $request->validated();
-        $dto = new NoteDTO($validated['title'], $validated['description'], $validated['category_id'] ?? null);
+        $dto = new NoteDTO($request->validated());
 
-        Log::info('Attempting to create a note', ['data' => $validated]);
+        Log::info('Attempting to create a note', ['data' => $request->validated()]);
         $note = $this->noteService->create($dto);
         Log::info('Note created successfully', ['note_id' => $note->id]);
 
@@ -49,10 +48,9 @@ class NoteController extends Controller
 
     public function update(NoteRequest $request, Note $note)
     {
-        $validated = $request->validated();
-        $dto = new NoteDTO($validated['title'], $validated['description'], $validated['category_id'] ?? null);
+        $dto = new NoteDTO($request->validated());
 
-        Log::info('Attempting to update note', ['note_id' => $note->id, 'data' => $validated]);
+        Log::info('Attempting to update note', ['note_id' => $note->id, 'data' => $request->validated()]);
         $updatedNote = $this->noteService->update($note, $dto);
         Log::info('Note updated successfully', ['note_id' => $updatedNote->id]);
 

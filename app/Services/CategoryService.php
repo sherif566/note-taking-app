@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\DTOs\CategoryDTO;
 use App\Repositories\Interfaces\RepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CategoryService
 {
@@ -15,7 +16,7 @@ class CategoryService
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function getAll(): \Illuminate\Database\Eloquent\Collection
+    public function getAll(): LengthAwarePaginator
     {
         return $this->categoryRepository->all();
     }

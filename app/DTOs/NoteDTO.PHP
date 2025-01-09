@@ -2,12 +2,11 @@
 
 namespace App\DTOs;
 
-class NoteDTO
+use Spatie\DataTransferObject\DataTransferObject;
+
+class NoteDTO extends DataTransferObject
 {
-    public function __construct(
-        public readonly string $title,
-        public readonly string $description,
-        public readonly ?int $category_id = null
-    ) {
-    }
+    public string $title;
+    public string $description;
+    public ?int $category_id = null;
 }

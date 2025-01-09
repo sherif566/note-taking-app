@@ -2,33 +2,26 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Interfaces\RepositoryInterface;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 
-class CategoryRepository implements RepositoryInterface
+class CategoryRepository extends BaseRepository
 {
-    public function all($perPage = 10): LengthAwarePaginator
+    public function __construct(Category $category)
     {
-        return Category::paginate($perPage);
+        parent::__construct($category);
     }
 
-    public function create(array $data): Category
+    public function update(Model $category, array $data): Category
     {
-        return Category::create($data);
-    }
+        if (!($category instanceof Category)) {
+            throw new \InvalidArgumentException("Expected instance of Category.");
+        }
 
-    public function update($category, array $data): Category
-    {
-        return tap($category, function ($category) use ($data) {
+        return tap($category, function (Category $category) use ($data) {
             $category->update($data);
             Log::info('Category updated', ['category_id' => $category->id]);
         });
-    }
-
-    public function delete($category): bool
-    {
-        return $category->delete();
     }
 }

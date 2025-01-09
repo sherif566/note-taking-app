@@ -2,41 +2,26 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Interfaces\RepositoryInterface;
 use App\Models\Note;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 
-class NoteRepository implements RepositoryInterface
+class NoteRepository extends BaseRepository
 {
-    public function all($perPage = 10): LengthAwarePaginator
+    public function __construct(Note $note)
     {
-        return Note::with('category')->paginate($perPage);
+        parent::__construct($note);
     }
 
-    public function create(array $data): Note
-    {
-        return Note::create($data);
-    }
-
-    public function update($note, array $data): Note
+    public function update(Model $note, array $data): Note
     {
         if (!($note instanceof Note)) {
             throw new \InvalidArgumentException("Expected instance of Note.");
         }
 
-        return tap($note, function ($note) use ($data) {
+        return tap($note, function (Note $note) use ($data) {
             $note->update($data);
             Log::info('Note updated', ['note_id' => $note->id]);
         });
-    }
-
-    public function delete($note): bool
-    {
-        if (!($note instanceof Note)) {
-            throw new \InvalidArgumentException("Expected instance of Note.");
-        }
-
-        return $note->delete();
     }
 }
