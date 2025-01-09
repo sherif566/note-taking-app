@@ -16,7 +16,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:' . Category::getTableName() . ',id',
+            'parent_id' => 'nullable|exists:' . Category::class . ',id',
         ];
     }
 }
