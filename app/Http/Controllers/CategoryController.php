@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 use App\Http\Requests\CategoryRequest;
 use App\Services\CategoryService;
@@ -18,12 +19,21 @@ class CategoryController extends Controller
     {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $categories = $this->categoryService->getAll();
-        Log::info('Retrieved all categories');
+        $query = Category::query();
+
+        // Check if a search term was provided.
+        if ($search = $request->input('search')) {
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        $categories = $query->get();
+
+        Log::info('Retrieved categories based on search criteria.');
         return CategoryResource::collection($categories);
     }
+
 
     public function show(Category $category): CategoryResource
     {

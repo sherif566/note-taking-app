@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\DTOs\CategoryDTO;
-use App\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\RepositoryInterface;
 
 class CategoryService
 {

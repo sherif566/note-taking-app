@@ -10,6 +10,8 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
+use Illuminate\Http\Request;
+
 
 class NoteController extends Controller
 {
@@ -17,11 +19,23 @@ class NoteController extends Controller
     {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $notes = $this->noteService->getAll();
+        $query = Note::query();
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $notes = $query->get();
+
+        Log::info('Retrieved notes based on search criteria');
         return NoteResource::collection($notes);
     }
+
 
     public function show(Note $note): NoteResource
     {
