@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NoteRequest;
 use App\Services\CategoryNoteService;
+use App\Services\ValidationService;
 use App\DTOs\NoteDTO;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -16,50 +17,46 @@ class CategoryNoteController extends Controller
 {
     use RespondsWithHttpStatus;
 
-    private CategoryNoteService $categorynoteService;
+    private CategoryNoteService $categoryNoteService;
+    private ValidationService $validationService;
 
-    public function __construct(CategoryNoteService $categorynoteService)
+    public function __construct(CategoryNoteService $categoryNoteService, ValidationService $validationService)
     {
-        $this->categorynoteService = $categorynoteService;
+        $this->categoryNoteService = $categoryNoteService;
+        $this->validationService = $validationService;
     }
 
-    public function index(Category $category): JsonResponse
+    public function index($category): JsonResponse
     {
-        $notes = Note::where('category_id', $category->id)->paginate(10);
-
-        Log::info('Retrieved notes for category', [
-            'category_id' => $category->id,
-            'notes_count' => $notes->total(),
-        ]);
-
+        $notes = Note::where('category_id', $category)->paginate(10);
+        Log::info('Retrieved notes for category', ['category_id' => $category]);
         return $this->success(NoteResource::collection($notes), 'Notes retrieved successfully');
     }
 
     public function store(NoteRequest $request, Category $category): JsonResponse
     {
-        $dto = new NoteDTO($request->validated() + ['category_id' => $category->id]);
-
-        try {
-            $note = $this->categorynoteService->create($dto, $category);
-            Log::info("Note created in category successfully", [
-                'category_id' => $category->id,
-                'note_id' => $note->id,
-            ]);
-
-            return $this->success(new NoteResource($note), 'Note created successfully', JsonResponse::HTTP_CREATED);
-        } catch (\Exception $e) {
-            Log::error("Failed to create note in category", [
-                'category_id' => $category->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return $this->error('Failed to create note', [], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        if (!$this->validationService->validateNoteCategory(new Note, $category)) {
+            return $this->error('Invalid category', [], JsonResponse::HTTP_BAD_REQUEST);
         }
+
+        $dto = new NoteDTO(
+            $request->get('title'),
+            $request->get('description'),
+            $category->id
+        );
+
+        $note = $this->categoryNoteService->create($dto, $category);
+        Log::info("Note created in category successfully", [
+            'category_id' => $category->id,
+            'note_id' => $note->id
+        ]);
+
+        return $this->success(new NoteResource($note), 'Note created successfully', JsonResponse::HTTP_CREATED);
     }
 
     public function update(NoteRequest $request, Category $category, Note $note): JsonResponse
     {
-        if ($note->category_id !== $category->id) {
+        if (!$this->validationService->validateNoteCategory($note, $category)) {
             Log::warning('Mismatched category for note update', [
                 'note_id' => $note->id,
                 'expected_category_id' => $category->id,
@@ -69,31 +66,24 @@ class CategoryNoteController extends Controller
             return $this->error('Note does not belong to this category', [], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $dto = new NoteDTO($request->validated() + ['category_id' => $category->id]);
+        $dto = new NoteDTO(
+            $request->get('title'),
+            $request->get('description'),
+            $category->id
+        );
 
-        try {
-            $updatedNote = $this->categorynoteService->update($note, $dto, $category);
+        $updatedNote = $this->categoryNoteService->update($note, $dto, $category);
+        Log::info("Note updated in category successfully", [
+            'category_id' => $category->id,
+            'note_id' => $updatedNote->id
+        ]);
 
-            Log::info("Note updated in category successfully", [
-                'category_id' => $category->id,
-                'note_id' => $updatedNote->id,
-            ]);
-
-            return $this->success(new NoteResource($updatedNote), 'Note updated successfully');
-        } catch (\Exception $e) {
-            Log::error("Failed to update note in category", [
-                'note_id' => $note->id,
-                'category_id' => $category->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return $this->error('Failed to update note', [], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->success(new NoteResource($updatedNote), 'Note updated successfully');
     }
 
     public function destroy(Category $category, Note $note): JsonResponse
     {
-        if ($note->category_id !== $category->id) {
+        if (!$this->validationService->validateNoteCategory($note, $category)) {
             Log::warning('Mismatched category for note deletion', [
                 'note_id' => $note->id,
                 'expected_category_id' => $category->id,
@@ -103,23 +93,12 @@ class CategoryNoteController extends Controller
             return $this->error('Note does not belong to this category', [], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        try {
-            $this->categorynoteService->delete($category, $note);
+        $this->categoryNoteService->delete($category, $note);
+        Log::info("Deleting note from category", [
+            'category_id' => $category->id,
+            'note_id' => $note->id
+        ]);
 
-            Log::info("Note deleted from category successfully", [
-                'category_id' => $category->id,
-                'note_id' => $note->id,
-            ]);
-
-            return $this->success(null, 'Note deleted successfully', JsonResponse::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::error("Failed to delete note from category", [
-                'note_id' => $note->id,
-                'category_id' => $category->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return $this->error('Failed to delete note', [], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->success(null, 'Note deleted successfully', JsonResponse::HTTP_OK);
     }
 }
