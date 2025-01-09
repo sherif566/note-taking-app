@@ -59,9 +59,9 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-        Log::info('Attempting to delete note', ['note_id' => $note->id]);
+        Log::info('Attempting to delete note');
         $this->noteService->delete($note);
-        Log::info('Note deleted successfully', ['note_id' => $note->id]);
+        Log::info('Note deleted successfully');
 
         return $this->success(null, 'Note deleted successfully', 200);
     }
