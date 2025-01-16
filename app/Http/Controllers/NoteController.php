@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\NoteRequest;
+use App\Http\Requests\NoteSearchRequest;
 use App\Services\NoteService;
 use App\DTOs\NoteDTO;
+use App\DTOs\NoteSearchDTO;
 use App\Http\Resources\NoteResource;
 use App\Traits\RespondsWithHttpStatus;
 use App\Models\Note;
@@ -22,11 +24,18 @@ class NoteController extends Controller
         $this->noteService = $noteService;
     }
 
-    public function index(Request $request)
+    public function index(NoteSearchRequest $request)
     {
-        $notes = $this->noteService->getAll($request->input('search'));
-        Log::info('Retrieving all notes', ['search' => $request->input('search')]);
-        return $this->success(NoteResource::collection($notes), 'Notes retrieved successfully');
+        $dto = new NoteSearchDTO($request->validated());
+
+        $notes = $this->noteService->searchNotes($dto);
+
+        Log::info('Retrieved notes based on search criteria.', $request->validated());
+
+        return $this->success(
+            NoteResource::collection($notes),
+            'Notes retrieved successfully'
+        );
     }
 
     public function show(Note $note)

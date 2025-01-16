@@ -4,8 +4,9 @@ namespace App\Services;
 
 use App\Repositories\Interfaces\CRUDInterface;
 use App\DTOs\NoteDTO;
+use App\DTOs\NoteSearchDTO;
 use App\Models\Note;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class NoteService
 {
@@ -16,18 +17,28 @@ class NoteService
         $this->noteRepository = $noteRepository;
     }
 
-    public function getAll($search = null): Collection
+    public function getAll(): LengthAwarePaginator
+    {
+        return $this->noteRepository->all();
+    }
+
+    public function searchNotes(NoteSearchDTO $dto): LengthAwarePaginator
     {
         $query = Note::query();
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
-            });
+        if ($dto->title) {
+            $query->where('title', 'LIKE', "%{$dto->title}%");
         }
 
-        return $query->get();
+        if ($dto->description) {
+            $query->where('description', 'LIKE', "%{$dto->description}%");
+        }
+
+        if ($dto->category_id) {
+            $query->where('category_id', $dto->category_id);
+        }
+
+        return $query->paginate($dto->per_page, ['*'], 'page', $dto->page);
     }
 
     public function create(NoteDTO $dto): Note

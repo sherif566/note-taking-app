@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\DTOs\CategoryDTO;
+use App\DTOs\CategorySearchDTO;
 use App\Repositories\Interfaces\CRUDInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -40,5 +41,22 @@ class CategoryService
     public function delete(Category $category): bool
     {
         return $this->categoryRepository->delete($category);
+    }
+
+    public function searchCategories(CategorySearchDTO $dto): LengthAwarePaginator
+    {
+        $query = Category::query();
+
+        // Add search conditions based on the DTO
+        if ($dto->name) {
+            $query->where('name', 'LIKE', "%{$dto->name}%");
+        }
+
+        if ($dto->parent_id) {
+            $query->where('parent_id', $dto->parent_id);
+        }
+
+        // Return paginated results
+        return $query->paginate($dto->per_page, ['*'], 'page', $dto->page);
     }
 }

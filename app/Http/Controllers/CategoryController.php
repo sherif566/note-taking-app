@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\CategorySearchRequest;
 use App\Services\CategoryService;
 use App\DTOs\CategoryDTO;
+use App\DTOs\CategorySearchDTO;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
@@ -23,19 +24,18 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(CategorySearchRequest $request): JsonResponse
     {
-        $query = Category::query();
+        $dto = new CategorySearchDTO($request->validated());
 
-        if ($search = $request->input('search')) {
-            $query->where('name', 'LIKE', "%{$search}%");
-            Log::info('Searching categories', ['search' => $search]);
-        }
+        $categories = $this->categoryService->searchCategories($dto);
 
-        $categories = $query->get();
-        Log::info('Retrieved categories based on search criteria.');
+        Log::info('Retrieved categories based on search criteria.', $request->validated());
 
-        return $this->success(CategoryResource::collection($categories), 'Categories retrieved successfully');
+        return $this->success(
+            CategoryResource::collection($categories),
+            'Categories retrieved successfully'
+        );
     }
 
     public function show(Category $category): JsonResponse
