@@ -6,6 +6,9 @@ use App\Models\Note;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method LengthAwarePaginator search(array $filters = [], int $perPage, int $page)
+ */
 class NoteRepository extends BaseRepository
 {
     public function __construct(Note $note)

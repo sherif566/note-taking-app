@@ -22,23 +22,14 @@ class NoteService
         return $this->noteRepository->all();
     }
 
+
     public function searchNotes(NoteSearchDTO $dto): LengthAwarePaginator
     {
-        $query = Note::query();
-
-        if ($dto->title) {
-            $query->where('title', 'LIKE', "%{$dto->title}%");
-        }
-
-        if ($dto->description) {
-            $query->where('description', 'LIKE', "%{$dto->description}%");
-        }
-
-        if ($dto->category_id) {
-            $query->where('category_id', $dto->category_id);
-        }
-
-        return $query->paginate($dto->per_page, ['*'], 'page', $dto->page);
+        return $this->noteRepository->search(
+            $dto->toArray(),
+            $dto->per_page,
+            $dto->page
+        );
     }
 
     public function create(NoteDTO $dto): Note

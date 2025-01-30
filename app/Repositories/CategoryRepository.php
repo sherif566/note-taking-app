@@ -6,6 +6,9 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method LengthAwarePaginator search(array $filters = [], int $perPage, int $page)
+ */
 class CategoryRepository extends BaseRepository
 {
     public function __construct(Category $category)

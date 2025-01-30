@@ -45,18 +45,10 @@ class CategoryService
 
     public function searchCategories(CategorySearchDTO $dto): LengthAwarePaginator
     {
-        $query = Category::query();
-
-        // Add search conditions based on the DTO
-        if ($dto->name) {
-            $query->where('name', 'LIKE', "%{$dto->name}%");
-        }
-
-        if ($dto->parent_id) {
-            $query->where('parent_id', $dto->parent_id);
-        }
-
-        // Return paginated results
-        return $query->paginate($dto->per_page, ['*'], 'page', $dto->page);
+        return $this->categoryRepository->search(
+            $dto->toArray(),
+            $dto->per_page,
+            $dto->page
+        );
     }
 }
