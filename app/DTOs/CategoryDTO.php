@@ -2,9 +2,9 @@
 
 namespace App\DTOs;
 
-use Spatie\DataTransferObject\DataTransferObject;
+use Spatie\LaravelData\Data;
 
-class CategoryDTO extends DataTransferObject
+class CategoryDTO extends Data
 {
     public string $name;
     public ?int $parent_id;

@@ -2,9 +2,9 @@
 
 namespace App\DTOs;
 
-use Spatie\DataTransferObject\DataTransferObject;
+use Spatie\LaravelData\Data;
 
-class NoteSearchDTO extends DataTransferObject
+class NoteSearchDTO extends Data
 {
     public ?string $title = null;
     public ?string $description = null;
