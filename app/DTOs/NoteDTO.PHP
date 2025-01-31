@@ -6,8 +6,10 @@ use Spatie\LaravelData\Data;
 
 class NoteDTO extends Data
 {
-    public string $title;
-    public string $description;
-    public ?int $category_id;
+    public function __construct(
+    public string $title,
+    public string $description,
+    public ?int $category_id
+    ) {}
 }
 

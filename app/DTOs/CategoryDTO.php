@@ -6,6 +6,8 @@ use Spatie\LaravelData\Data;
 
 class CategoryDTO extends Data
 {
-    public string $name;
-    public ?int $parent_id;
+    public function __construct(
+        public string $name,
+        public ?int $parent_id = null
+    ) {}
 }
