@@ -21,21 +21,15 @@ class CategoryService
     {
         return $this->categoryRepository->all();
     }
-
     public function create(CategoryDTO $dto): Category
     {
-        return $this->categoryRepository->create([
-            'name' => $dto->name,
-            'parent_id' => $dto->parent_id,
-        ]);
+        return $this->categoryRepository->create($dto->toArray());
     }
 
     public function update(Category $category, CategoryDTO $dto): Category
     {
-        return $this->categoryRepository->update($category, [
-            'name' => $dto->name,
-            'parent_id' => $dto->parent_id,
-        ]);
+        return $this->categoryRepository->update($category, $dto->toArray());
+
     }
 
     public function delete(Category $category): bool

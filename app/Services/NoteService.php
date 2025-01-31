@@ -34,20 +34,12 @@ class NoteService
 
     public function create(NoteDTO $dto): Note
     {
-        return $this->noteRepository->create([
-            'title' => $dto->title,
-            'description' => $dto->description,
-            'category_id' => $dto->category_id,
-        ]);
+        return $this->noteRepository->create($dto->toArray());
     }
 
     public function update(Note $note, NoteDTO $dto): Note
     {
-        return $this->noteRepository->update($note, [
-            'title' => $dto->title,
-            'description' => $dto->description,
-            'category_id' => $dto->category_id,
-        ]);
+        return $this->noteRepository->update($note, $dto->toArray());
     }
 
     public function delete(Note $note): bool
