@@ -37,7 +37,7 @@ class CategoryNoteController extends Controller
 
     public function store(NoteRequest $request, Category $category): JsonResponse
     {
-        $dto = new NoteDTO($request->validated() + ['category_id' => $category->id]);
+        $dto = NoteDTO::from($request->validated() + ['category_id' => $category->id]);
 
         $note = $this->categoryNoteService->create($dto->toArray(), $category);
 
@@ -51,7 +51,7 @@ class CategoryNoteController extends Controller
 
     public function update(NoteRequest $request, Category $category, Note $note): JsonResponse
     {
-        $dto = new NoteDTO($request->validated() + ['category_id' => $category->id]);
+        $dto = NoteDTO::from($request->validated() + ['category_id' => $category->id]);
 
         $updatedNote = $this->categoryNoteService->update($dto->toArray(), $category, $note);
 

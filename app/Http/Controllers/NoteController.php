@@ -26,7 +26,7 @@ class NoteController extends Controller
 
     public function index(NoteSearchRequest $request)
     {
-        $dto = new NoteSearchDTO($request->validated());
+        $dto = NoteSearchDTO::from($request->validated());
 
         $notes = $this->noteService->searchNotes($dto);
 
@@ -46,8 +46,7 @@ class NoteController extends Controller
 
     public function store(NoteRequest $request)
     {
-        $dto = new NoteDTO($request->validated());
-
+        $dto = NoteDTO::from($request->validated());
         Log::info('Attempting to create a note', ['data' => $request->validated()]);
         $note = $this->noteService->create($dto);
         Log::info('Note created successfully', ['note_id' => $note->id]);
@@ -57,7 +56,7 @@ class NoteController extends Controller
 
     public function update(NoteRequest $request, Note $note)
     {
-        $dto = new NoteDTO($request->validated());
+        $dto = NoteDTO::from($request->validated());
 
         Log::info('Attempting to update note', ['note_id' => $note->id, 'data' => $request->validated()]);
         $updatedNote = $this->noteService->update($note, $dto);
