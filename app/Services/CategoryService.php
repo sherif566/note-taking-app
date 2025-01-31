@@ -37,7 +37,7 @@ class CategoryService
         return $this->categoryRepository->delete($category);
     }
 
-    public function searchCategories(CategorySearchDTO $dto): LengthAwarePaginator
+    public function search(CategorySearchDTO $dto): LengthAwarePaginator
     {
         return $this->categoryRepository->search(
             $dto->toArray(),

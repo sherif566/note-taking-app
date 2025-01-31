@@ -23,7 +23,7 @@ class NoteService
     }
 
 
-    public function searchNotes(NoteSearchDTO $dto): LengthAwarePaginator
+    public function search(NoteSearchDTO $dto): LengthAwarePaginator
     {
         return $this->noteRepository->search(
             $dto->toArray(),
