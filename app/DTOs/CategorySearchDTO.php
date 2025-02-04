@@ -2,14 +2,12 @@
 
 namespace App\DTOs;
 
-use Spatie\LaravelData\Data;
-
-class CategorySearchDTO extends Data
+class CategorySearchDTO extends PaginationDTO
 {
     public function __construct(
-    public ?string $name = null,
-    public ?int $parent_id = null,
-    public int $per_page = 15,
-    public int $page = 1
-    ) {}
+        public ?string $name = null,
+        public ?int $parent_id = null
+    ) {
+        parent::__construct();
+    }
 }
