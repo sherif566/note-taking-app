@@ -2,31 +2,17 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class NoteSearchRequest extends FormRequest
+class NoteSearchRequest extends PaginationRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        return [
+        return array_merge(parent::rules(), [
             'title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'category_id' => ['nullable', 'integer'],
-            'per_page' => ['nullable', 'integer', 'min:1'],
-            'page' => ['nullable', 'integer', 'min:1'],
-        ];
+        ]);
     }
 }

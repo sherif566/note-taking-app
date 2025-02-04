@@ -21,6 +21,7 @@ class CategoryService
     {
         return $this->categoryRepository->all();
     }
+
     public function create(CategoryDTO $dto): Category
     {
         return $this->categoryRepository->create($dto->toArray());

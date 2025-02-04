@@ -28,7 +28,7 @@ class CategoryController extends Controller
     {
         $dto = CategorySearchDTO::from($request->validated());
 
-        $categories = $this->categoryService->searchCategories($dto);
+        $categories = $this->categoryService->search($dto);
 
         Log::info('Retrieved categories based on search criteria.', $request->validated());
 

@@ -28,7 +28,7 @@ class NoteController extends Controller
     {
         $dto = NoteSearchDTO::from($request->validated());
 
-        $notes = $this->noteService->searchNotes($dto);
+        $notes = $this->noteService->search($dto);
 
         Log::info('Retrieved notes based on search criteria.', $request->validated());
 

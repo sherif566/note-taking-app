@@ -2,30 +2,17 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class CategorySearchRequest extends FormRequest
+class CategorySearchRequest extends PaginationRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        return [
+        // Merge the pagination rules from the parent class with the specific rules for this request
+        return array_merge(parent::rules(), [
             'name' => ['nullable', 'string', 'max:255'],
             'parent_id' => ['nullable', 'integer'],
-            'per_page' => ['nullable', 'integer', 'min:1'],
-            'page' => ['nullable', 'integer', 'min:1'],
-        ];
+        ]);
     }
 }

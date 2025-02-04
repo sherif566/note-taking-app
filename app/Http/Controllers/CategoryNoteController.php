@@ -18,6 +18,7 @@ class CategoryNoteController extends Controller
 
     private CategoryNoteService $categoryNoteService;
 
+
     public function __construct(CategoryNoteService $categoryNoteService)
     {
         $this->categoryNoteService = $categoryNoteService;
