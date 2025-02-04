@@ -26,11 +26,16 @@ class CategoryController extends Controller
 
     public function index(CategorySearchRequest $request): JsonResponse
     {
+        Log::info('Category search started.', ['request' => $request->validated()]);
+
         $dto = CategorySearchDTO::from($request->validated());
 
         $categories = $this->categoryService->search($dto);
 
-        Log::info('Retrieved categories based on search criteria.', $request->validated());
+        Log::info('Category search completed.', [
+            'request' => $request->validated(),
+            'categories_count' => $categories->count()
+        ]);
 
         return $this->success(
             CategoryResource::collection($categories),
@@ -46,24 +51,37 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request): JsonResponse
     {
+        Log::info('Category storing started.', ['request' => $request->validated()]);
+
         $dto = CategoryDTO::from($request->validated());
         $category = $this->categoryService->create($dto);
+
         Log::info('Created a new category', ['category_id' => $category->id]);
+
         return $this->success(new CategoryResource($category), 'Category created successfully', JsonResponse::HTTP_CREATED);
     }
 
     public function update(CategoryRequest $request, Category $category): JsonResponse
     {
+        Log::info('Category updating started.', ['request' => $request->validated()]);
+
         $dto = CategoryDTO::from($request->validated());
         $updatedCategory = $this->categoryService->update($category, $dto);
-        Log::info('Updated category', ['category_id' => $updatedCategory->id]);
+
+        Log::info('Updated the category', ['category_id' => $updatedCategory->id]);
+
         return $this->success(new CategoryResource($updatedCategory), 'Category updated successfully');
     }
 
     public function destroy(Category $category): JsonResponse
     {
+        Log::info('Category deletion started.', ['category_id' => $category->id, 'category_name' => $category->name]);
+
         $this->categoryService->delete($category);
-        Log::info('Deleted category', ['category_id' => $category->id]);
+
+        Log::info('Category deletion completed.', ['category_id' => $category->id]);
+
         return $this->success(null, 'Category deleted successfully', JsonResponse::HTTP_OK);
     }
+
 }

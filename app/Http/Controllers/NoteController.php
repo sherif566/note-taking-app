@@ -26,11 +26,16 @@ class NoteController extends Controller
 
     public function index(NoteSearchRequest $request)
     {
+        Log::info('Note search started.', ['request' => $request->validated()]);
+
         $dto = NoteSearchDTO::from($request->validated());
 
         $notes = $this->noteService->search($dto);
 
-        Log::info('Retrieved notes based on search criteria.', $request->validated());
+        Log::info('Notes search completed.', [
+            'request' => $request->validated(),
+            'notes_count' => $notes->count()
+        ]);
 
         return $this->success(
             NoteResource::collection($notes),
@@ -46,20 +51,24 @@ class NoteController extends Controller
 
     public function store(NoteRequest $request)
     {
+        Log::info('New note storing started.', ['request' => $request->validated()]);
+
         $dto = NoteDTO::from($request->validated());
-        Log::info('Attempting to create a note', ['data' => $request->validated()]);
         $note = $this->noteService->create($dto);
-        Log::info('Note created successfully', ['note_id' => $note->id]);
+
+        Log::info('New note created successfully', ['note_id' => $note->id]);
 
         return $this->success(new NoteResource($note), 'Note created successfully', 201);
     }
 
     public function update(NoteRequest $request, Note $note)
     {
+        Log::info('Note updating started.', ['request' => $request->validated()]);
+
         $dto = NoteDTO::from($request->validated());
 
-        Log::info('Attempting to update note', ['note_id' => $note->id, 'data' => $request->validated()]);
         $updatedNote = $this->noteService->update($note, $dto);
+
         Log::info('Note updated successfully', ['note_id' => $updatedNote->id]);
 
         return $this->success(new NoteResource($updatedNote), 'Note updated successfully');
@@ -67,9 +76,11 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-        Log::info('Attempting to delete note');
+        Log::info('Note deletion started.', ['note_id' => $note->id]);
+
         $this->noteService->delete($note);
-        Log::info('Note deleted successfully');
+
+        Log::info('Note deletion completed.', ['note_id' => $note->id]);
 
         return $this->success(null, 'Note deleted successfully', 200);
     }
