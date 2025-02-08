@@ -37,23 +37,4 @@ abstract class BaseRepository implements CRUDInterface
         return $model->delete();
     }
 
-    public function search(array $filters = [], int $perPage, int $page): LengthAwarePaginator
-    {
-        unset($filters['per_page'], $filters['page']);
-
-        $query = $this->model->query();
-
-        foreach ($filters as $column => $value) {
-            if ($value !== null) {
-                if (in_array($column, ['category_id', "parent_id"])) {
-                    $query->where($column, $value);
-                } else {
-                    $query->where($column, 'LIKE', "%{$value}%");
-                }
-            }
-        }
-
-        return $query->paginate($perPage, ['*'], 'page', $page);
-    }
-
 }
