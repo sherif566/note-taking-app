@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\CRUDInterface;
 use App\DTOs\NoteDTO;
 use App\DTOs\NoteSearchDTO;
 use App\Models\Note;
+use App\Repositories\NoteRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class NoteService
 {
-    private CRUDInterface $noteRepository;
+    private NoteRepository $noteRepository;
 
-    public function __construct(CRUDInterface $noteRepository)
+    public function __construct(NoteRepository $noteRepository)
     {
         $this->noteRepository = $noteRepository;
     }
@@ -22,14 +22,9 @@ class NoteService
         return $this->noteRepository->all();
     }
 
-
     public function search(NoteSearchDTO $dto): LengthAwarePaginator
     {
-        return $this->noteRepository->search(
-            $dto->toArray(),
-            $dto->per_page,
-            $dto->page
-        );
+        return $this->noteRepository->search($dto);
     }
 
     public function create(NoteDTO $dto): Note

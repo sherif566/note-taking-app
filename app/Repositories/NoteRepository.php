@@ -6,6 +6,7 @@ use App\Models\Note;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\DTOs\NoteSearchDTO;
 
 
 class NoteRepository extends BaseRepository
@@ -26,22 +27,24 @@ class NoteRepository extends BaseRepository
             Log::info('Note updated', ['note_id' => $note->id]);
         });
     }
-    public function search(array $filters = [], int $perPage, int $page): LengthAwarePaginator
+
+    public function search(NoteSearchDTO $dto): LengthAwarePaginator
     {
-        unset($filters['per_page'], $filters['page']);
+        $query = $this->model->newQuery();
 
-        $query = $this->model->query();
-
-        foreach ($filters as $column => $value) {
-            if ($value !== null) {
-                if (in_array($column, ['category_id'])) {
-                    $query->where($column, $value);
-                } else {
-                    $query->where($column, 'LIKE', "%{$value}%");
-                }
-            }
+        if ($dto->title) {
+            $query->where('title', 'LIKE', "%{$dto->title}%");
         }
 
-        return $query->paginate($perPage, ['*'], 'page', $page);
+        if ($dto->description) {
+            $query->where('description', 'LIKE', "%{$dto->description}%");
+        }
+
+        if ($dto->category_id !== null) {
+            $query->where('category_id', $dto->category_id);
+        }
+
+        return $this->paginate($query, $dto->pagination);
     }
+
 }

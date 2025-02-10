@@ -40,10 +40,6 @@ class CategoryService
 
     public function search(CategorySearchDTO $dto): LengthAwarePaginator
     {
-        return $this->categoryRepository->search(
-            $dto->toArray(),
-            $dto->per_page,
-            $dto->page
-        );
+        return $this->categoryRepository->search($dto);
     }
 }

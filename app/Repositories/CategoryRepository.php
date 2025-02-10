@@ -6,7 +6,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use App\DTOs\CategorySearchDTO;
 
 class CategoryRepository extends BaseRepository
 {
@@ -26,22 +26,18 @@ class CategoryRepository extends BaseRepository
             Log::info('Category updated', ['category_id' => $category->id]);
         });
     }
-    public function search(array $filters = [], int $perPage, int $page): LengthAwarePaginator
+    public function search(CategorySearchDTO $dto): LengthAwarePaginator
     {
-        unset($filters['per_page'], $filters['page']);
+        $query = $this->model->newQuery();
 
-        $query = $this->model->query();
-
-        foreach ($filters as $column => $value) {
-            if ($value !== null) {
-                if (in_array($column, ['parent_id'])) {
-                    $query->where($column, $value);
-                } else {
-                    $query->where($column, 'LIKE', "%{$value}%");
-                }
-            }
+        if ($dto->name) {
+            $query->where('name', 'LIKE', "%{$dto->name}%");
         }
 
-        return $query->paginate($perPage, ['*'], 'page', $page);
+        if ($dto->parent_id !== null) {
+            $query->where('parent_id', $dto->parent_id);
+        }
+
+        return $this->paginate($query, $dto->pagination);
     }
 }

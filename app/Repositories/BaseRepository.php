@@ -5,7 +5,8 @@ use App\Repositories\Interfaces\CRUDInterface;
 use App\Utilities\Constants;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use Illuminate\Database\Eloquent\Builder;
+use App\DTOs\PaginationDTO;
 abstract class BaseRepository implements CRUDInterface
 {
     protected Model $model;
@@ -35,6 +36,11 @@ abstract class BaseRepository implements CRUDInterface
     public function delete(Model $model): bool
     {
         return $model->delete();
+    }
+
+    protected function paginate($query, PaginationDTO $paginationDTO): LengthAwarePaginator
+    {
+        return $query->paginate($paginationDTO->per_page, ['*'], 'page', $paginationDTO->page);
     }
 
 }

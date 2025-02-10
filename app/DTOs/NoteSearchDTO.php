@@ -10,6 +10,7 @@ class NoteSearchDTO extends PaginationDTO
     public ?string $title = null,
     public ?string $description = null,
     public ?int $category_id = null,
+    public PaginationDTO $pagination
     ) {
         parent::__construct();
     }
