@@ -21,13 +21,12 @@ class CategoryController extends Controller
 
     public function index(CategorySearchRequest $request): JsonResponse
     {
-        Log::info('Category search started.', ['request' => $request->validated()]);
+        Log::info('Category retrieval started.', ['request' => $request->validated()]);
 
         $dto = CategorySearchDTO::from($request->validated());
+        $categories = $this->categoryService->getAll($dto);
 
-        $categories = $this->categoryService->search($dto);
-
-        Log::info('Category search completed.', [
+        Log::info('Category retrieval completed.', [
             'request' => $request->validated(),
             'categories_count' => $categories->count()
         ]);
@@ -37,6 +36,7 @@ class CategoryController extends Controller
             'Categories retrieved successfully'
         );
     }
+
 
     public function show(Category $category): JsonResponse
     {

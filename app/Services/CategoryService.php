@@ -13,16 +13,18 @@ class CategoryService
 {
     public function __construct(private CategoryRepository $categoryRepository) {}
 
-    public function getAll(): LengthAwarePaginator
+
+    public function getAll(CategorySearchDTO $dto): LengthAwarePaginator
     {
-        Log::info('Fetching all categories.');
+        Log::info('Fetching categories with filters.', ['filters' => $dto]);
 
-        $categories = $this->categoryRepository->all();
+        $categories = $this->categoryRepository->search($dto);
 
-        Log::info('Fetched all categories.', ['categories_count' => $categories->total()]);
+        Log::info('Fetched categories.', ['categories_count' => $categories->total()]);
 
         return $categories;
     }
+
 
 
 

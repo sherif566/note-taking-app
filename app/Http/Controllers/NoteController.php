@@ -21,13 +21,12 @@ class NoteController extends Controller
 
     public function index(NoteSearchRequest $request)
     {
-        Log::info('Note search started.', ['request' => $request->validated()]);
+        Log::info('Note retrieval started.', ['request' => $request->validated()]);
 
         $dto = NoteSearchDTO::from($request->validated());
+        $notes = $this->noteService->getAll($dto);
 
-        $notes = $this->noteService->search($dto);
-
-        Log::info('Notes search completed.', [
+        Log::info('Note retrieval completed.', [
             'request' => $request->validated(),
             'notes_count' => $notes->count()
         ]);
@@ -37,6 +36,7 @@ class NoteController extends Controller
             'Notes retrieved successfully'
         );
     }
+
 
     public function show(Note $note)
     {

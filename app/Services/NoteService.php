@@ -13,13 +13,13 @@ class NoteService
 {
     public function __construct(private NoteRepository $noteRepository) {}
 
-    public function getAll(): LengthAwarePaginator
+    public function getAll(NoteSearchDTO $dto): LengthAwarePaginator
     {
-        Log::info('Fetching all notes');
+        Log::info('Fetching notes.', ['search_parameters' => $dto->toArray()]);
 
-        $notes = $this->noteRepository->all();
+        $notes = $this->noteRepository->search($dto);
 
-        Log::info('Fetched all notes', ['total' => $notes->total()]);
+        Log::info('Fetched notes.', ['notes_count' => $notes->total()]);
 
         return $notes;
     }
