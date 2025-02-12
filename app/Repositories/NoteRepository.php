@@ -19,18 +19,26 @@ class NoteRepository extends BaseRepository
 
     public function update(Model $note, array $data): Note
     {
+        Log::debug('Executing Note update query');
+
         if (!($note instanceof Note)) {
             throw new \InvalidArgumentException("Expected instance of Note.");
         }
 
         return tap($note, function (Note $note) use ($data) {
             $note->update($data);
-            Log::info('Note updated', ['note_id' => $note->id]);
+
+            Log::debug('Note updated successfully', ['category_id' => $note->id]);
+
         });
+
+
     }
 
     public function search(NoteSearchDTO $dto): LengthAwarePaginator
     {
+        Log::debug('Executing Note search query', ['filters' => $dto->toArray()]);
+
         $query = $this->model->query();
 
         if ($dto->title) {
@@ -44,6 +52,8 @@ class NoteRepository extends BaseRepository
         if ($dto->category_id) {
             $query->where('category_id', $dto->category_id);
         }
+
+        Log::debug('Note search query executed successfully');
 
         return $this->paginate($query);
     }

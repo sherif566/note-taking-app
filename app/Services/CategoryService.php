@@ -7,6 +7,7 @@ use App\DTOs\CategoryDTO;
 use App\DTOs\CategorySearchDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Repositories\CategoryRepository;
+use Illuminate\Support\Facades\Log;
 
 class CategoryService
 {
@@ -14,27 +15,66 @@ class CategoryService
 
     public function getAll(): LengthAwarePaginator
     {
-        return $this->categoryRepository->all();
+        Log::info('Fetching all categories.');
+
+        $categories = $this->categoryRepository->all();
+
+        Log::info('Fetched all categories.', ['categories_count' => $categories->total()]);
+
+        return $categories;
     }
+
+
 
     public function create(CategoryDTO $dto): Category
     {
-        return $this->categoryRepository->create($dto->toArray());
+        Log::info('Creating a new category.', ['data' => $dto->toArray()]);
+
+        $category = $this->categoryRepository->create($dto->toArray());
+
+        Log::info('Category created successfully.', ['category_id' => $category->id]);
+
+        return $category;
     }
+
+
+
+
 
     public function update(Category $category, CategoryDTO $dto): Category
     {
-        return $this->categoryRepository->update($category, $dto->toArray());
+        Log::info('Updating category.', ['category_id' => $category->id, 'data' => $dto->toArray()]);
 
+        $updatedCategory = $this->categoryRepository->update($category, $dto->toArray());
+
+        Log::info('Category updated successfully.', ['category_id' => $updatedCategory->id]);
+
+        return $updatedCategory;
     }
+
+
 
     public function delete(Category $category): bool
     {
-        return $this->categoryRepository->delete($category);
+        Log::info('Deleting category.', ['category_id' => $category->id]);
+
+        $deleted = $this->categoryRepository->delete($category);
+
+        Log::info('Category deleted successfully.', ['category_id' => $category->id, 'status' => $deleted]);
+
+        return $deleted;
     }
+
+
 
     public function search(CategorySearchDTO $dto): LengthAwarePaginator
     {
-        return $this->categoryRepository->search($dto);
+        Log::info('Searching Categories.', ['filters' => $dto->toArray()]);
+
+        $categories = $this->categoryRepository->search($dto);
+
+        Log::info('Category search successful.', ['categories_count' => $categories->total()]);
+
+        return $categories;
     }
 }
