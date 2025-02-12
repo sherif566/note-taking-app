@@ -1,0 +1,7 @@
+[33m8c37ab5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{0}: checkout: moving from feature/crud-operations to development
+[33m190ecbb[m HEAD@{1}: commit: feat: Add repositories to the services and controllers
+[33mc00f20a[m HEAD@{2}: commit: feat: add CRUD operations for notes and categories
+[33m8c37ab5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{3}: checkout: moving from development to feature/crud-operations
+[33m8c37ab5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{4}: checkout: moving from development to development
+[33m8c37ab5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{5}: checkout: moving from development to development
+[33m8c37ab5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{6}: commit (initial): chore: initialize Laravel project
