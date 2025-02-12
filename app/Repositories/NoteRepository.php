@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\DTOs\NoteSearchDTO;
+use App\DTOs\PaginationDTO;
 
 
 class NoteRepository extends BaseRepository
@@ -30,7 +31,7 @@ class NoteRepository extends BaseRepository
 
     public function search(NoteSearchDTO $dto): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        $query = $this->model->query();
 
         if ($dto->title) {
             $query->where('title', 'LIKE', "%{$dto->title}%");
@@ -40,11 +41,12 @@ class NoteRepository extends BaseRepository
             $query->where('description', 'LIKE', "%{$dto->description}%");
         }
 
-        if ($dto->category_id !== null) {
+        if ($dto->category_id) {
             $query->where('category_id', $dto->category_id);
         }
 
-        return $this->paginate($query, $dto->pagination);
+        return $this->paginate($query);
     }
+
 
 }

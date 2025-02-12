@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\DTOs\CategorySearchDTO;
 
+
 class CategoryRepository extends BaseRepository
 {
     public function __construct(Category $category)
@@ -28,16 +29,17 @@ class CategoryRepository extends BaseRepository
     }
     public function search(CategorySearchDTO $dto): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        $query = $this->model->query();
 
         if ($dto->name) {
             $query->where('name', 'LIKE', "%{$dto->name}%");
         }
 
-        if ($dto->parent_id !== null) {
+        if ($dto->parent_id) {
             $query->where('parent_id', $dto->parent_id);
         }
 
-        return $this->paginate($query, $dto->pagination);
+        return $this->paginate($query);
     }
+
 }

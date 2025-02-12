@@ -17,12 +17,7 @@ class NoteController extends Controller
 {
     use RespondsWithHttpStatus;
 
-    private NoteService $noteService;
-
-    public function __construct(NoteService $noteService)
-    {
-        $this->noteService = $noteService;
-    }
+    public function __construct(private NoteService $noteService) {}
 
     public function index(NoteSearchRequest $request)
     {

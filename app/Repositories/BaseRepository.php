@@ -5,9 +5,11 @@ use App\Repositories\Interfaces\CRUDInterface;
 use App\Utilities\Constants;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use App\DTOs\PaginationDTO;
+use Illuminate\Support\Facades\Log;
+
 abstract class BaseRepository implements CRUDInterface
+
 {
     protected Model $model;
 
@@ -38,9 +40,18 @@ abstract class BaseRepository implements CRUDInterface
         return $model->delete();
     }
 
-    protected function paginate($query, PaginationDTO $paginationDTO): LengthAwarePaginator
+    public function paginate($query): LengthAwarePaginator
     {
-        return $query->paginate($paginationDTO->per_page, ['*'], 'page', $paginationDTO->page);
+        $pagination = new PaginationDTO();
+
+        return $query->paginate(
+            $pagination->per_page,
+            ['*'],
+            'page',
+            $pagination->page
+        );
     }
+
+
 
 }

@@ -10,12 +10,7 @@ use App\Repositories\CategoryRepository;
 
 class CategoryService
 {
-    private CategoryRepository $categoryRepository;
-
-    public function __construct(CategoryRepository $categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
+    public function __construct(private CategoryRepository $categoryRepository) {}
 
     public function getAll(): LengthAwarePaginator
     {

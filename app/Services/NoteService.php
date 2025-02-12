@@ -10,12 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class NoteService
 {
-    private NoteRepository $noteRepository;
-
-    public function __construct(NoteRepository $noteRepository)
-    {
-        $this->noteRepository = $noteRepository;
-    }
+    public function __construct(private NoteRepository $noteRepository) {}
 
     public function getAll(): LengthAwarePaginator
     {

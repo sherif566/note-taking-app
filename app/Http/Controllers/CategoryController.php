@@ -17,12 +17,7 @@ class CategoryController extends Controller
 {
     use RespondsWithHttpStatus;
 
-    private CategoryService $categoryService;
-
-    public function __construct(CategoryService $categoryService)
-    {
-        $this->categoryService = $categoryService;
-    }
+    public function __construct(private CategoryService $categoryService) {}
 
     public function index(CategorySearchRequest $request): JsonResponse
     {
